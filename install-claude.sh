@@ -72,6 +72,34 @@ if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_
 EOF
 
   echo "✅ Claude configuration created with your account details and current timestamp"
+  
+  # Create credentials file if OAuth tokens are available
+  if [[ -n "${CLAUDE_ACCESS_TOKEN:-}" && -n "${CLAUDE_REFRESH_TOKEN:-}" ]]; then
+    CLAUDE_CREDS_DIR="$HOME/.claude"
+    CLAUDE_CREDS_FILE="$CLAUDE_CREDS_DIR/.credentials.json"
+    
+    # Ensure .claude directory exists
+    mkdir -p "$CLAUDE_CREDS_DIR"
+    
+    echo "Creating Claude credentials file..."
+    cat > "$CLAUDE_CREDS_FILE" << EOF
+{
+  "claudeAiOauth": {
+    "accessToken": "${CLAUDE_ACCESS_TOKEN}",
+    "refreshToken": "${CLAUDE_REFRESH_TOKEN}",
+    "expiresAt": 9999999999999,
+    "scopes": ["user:inference", "user:profile"],
+    "subscriptionType": "pro"
+  }
+}
+EOF
+    
+    # Set restrictive permissions like the original
+    chmod 600 "$CLAUDE_CREDS_FILE"
+    echo "✅ Claude credentials created"
+  else
+    echo "⚠️  Missing OAuth token secrets - interactive mode will require manual login"
+  fi
 else
   echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
