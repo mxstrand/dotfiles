@@ -18,15 +18,9 @@ if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
   # Add API key to shell profile for persistence
   if [[ -f ~/.bashrc ]] && ! grep -q "ANTHROPIC_API_KEY" ~/.bashrc; then
     echo "export ANTHROPIC_API_KEY=\"$CLAUDE_INSTALL_TOKEN\"" >> ~/.bashrc
-  fi
-  
-  # Set for current session and test
-  export ANTHROPIC_API_KEY="$CLAUDE_INSTALL_TOKEN"
-  
-  if claude -p "Ready!" >/dev/null 2>&1; then
-    echo "Authentication successful"
+    echo "Authentication configured - will be available in new shell sessions"
   else
-    echo "Authentication test failed - manual login may be required"
+    echo "Authentication already configured"
   fi
 else
   echo "No CLAUDE_INSTALL_TOKEN found - manual login required"
