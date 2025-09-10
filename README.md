@@ -23,7 +23,8 @@ Claude Code supports two distinct usage modes:
 **Mode 1: Interactive Claude Code (Recommended)**
 Full-featured IDE integration with file editing, project understanding, and interactive assistance.
 
-*Authentication Options:*
+*Authentication:*
+
 - **Manual Login (Default):** No secrets required - login interactively each time you start a new Codespace
 - **Automated Login (Optional):** Configure [Codespace secrets](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) to skip manual login:
 
@@ -52,16 +53,18 @@ Full-featured IDE integration with file editing, project understanding, and inte
      - `CLAUDE_ACCESS_TOKEN` - OAuth access token (enables automatic login)
      - `CLAUDE_REFRESH_TOKEN` - OAuth refresh token (enables automatic login)
 
+> [!NOTE]  
+> Access and refresh tokens may expire and require manual regeneration and updating.
+
 **Mode 2: Terminal Chat (`claude chat`)**
 Simple terminal-based chat interface for quick questions and text-based assistance.
 
 *Authentication:*
+
 Set this Codespace secret:
 - `CLAUDE_INSTALL_TOKEN` - Your Anthropic API key from the [Anthropic Console](https://console.anthropic.com/settings/keys)
 
-With these configurations, new Codespaces will have Claude Code ready to use immediately in your preferred mode.
-
-## Manual Installation
+## Local Installation
 
 ```bash
 git clone https://github.com/YOUR-USERNAME/dotfiles.git
