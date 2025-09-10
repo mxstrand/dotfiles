@@ -55,24 +55,28 @@ fi
 if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
   echo "🔐 Setting up Claude authentication..."
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] CLAUDE_INSTALL_TOKEN found, setting up authentication" | tee -a "$LOG_FILE"
-  if claude auth login --token "$CLAUDE_INSTALL_TOKEN" 2>&1 | tee -a "$LOG_FILE"; then
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Authentication setup successful" | tee -a "$LOG_FILE"
+  
+  # Set the API key as environment variable for Claude Code
+  export ANTHROPIC_API_KEY="$CLAUDE_INSTALL_TOKEN"
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Set ANTHROPIC_API_KEY environment variable" | tee -a "$LOG_FILE"
+  
+  # Test authentication by running a simple command
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Testing authentication with simple command" | tee -a "$LOG_FILE"
+  if claude -p "test" --cwd "$HOME" 2>&1 | tee -a "$LOG_FILE" | grep -q "test"; then
+    echo "✅ Authentication successful"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Authentication test passed" | tee -a "$LOG_FILE"
   else
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Authentication setup failed" | tee -a "$LOG_FILE"
+    echo "⚠️ Authentication test failed, but continuing (may need manual login)"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Authentication test failed" | tee -a "$LOG_FILE"
   fi
 else
-  echo "ℹ️  No CLAUDE_INSTALL_TOKEN found - manual login required"
+  echo "ℹ️ No CLAUDE_INSTALL_TOKEN found - manual login required"
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] No CLAUDE_INSTALL_TOKEN environment variable" | tee -a "$LOG_FILE"
 fi
 
-# Setup default preferences
-echo "⚙️ Configuring Claude preferences..."
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Setting default editor to 'code'" | tee -a "$LOG_FILE"
-if claude config set editor "code" 2>&1 | tee -a "$LOG_FILE"; then
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Editor configuration successful" | tee -a "$LOG_FILE"
-else
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Editor configuration failed or not available" | tee -a "$LOG_FILE"
-fi
+# Setup default preferences - remove the editor config since it's not essential for automation
+echo "⚙️ Claude Code setup complete"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skipping editor configuration (not essential for automation)" | tee -a "$LOG_FILE"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Claude Code installation process complete" | tee -a "$LOG_FILE"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Log file available at: $LOG_FILE" | tee -a "$LOG_FILE"
