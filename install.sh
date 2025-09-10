@@ -12,7 +12,8 @@ CLAUDE_INSTALL="$SCRIPT_DIR/install-claude.sh"
 echo "📦 Installing Claude Code..."
 if [[ -f "$CLAUDE_INSTALL" ]]; then
   chmod +x "$CLAUDE_INSTALL"
-  bash "$CLAUDE_INSTALL"
+  # Ensure output is visible during Codespace creation
+  "$CLAUDE_INSTALL" 2>&1
 else
   echo "❌ Error: $CLAUDE_INSTALL not found."
   exit 1
