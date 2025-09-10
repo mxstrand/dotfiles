@@ -11,20 +11,66 @@ else
   echo "Claude Code already installed"
 fi
 
-# Set up authentication if token is available
-if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
-  echo "Configuring authentication..."
+# Only create config if we have the required secrets
+if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_ORG_UUID:-}" ]]; then
+  CLAUDE_CONFIG_FILE="$HOME/.claude.json"
+  echo "Creating Claude configuration with environment variables..."
   
-  # Add API key to shell profile for persistence
-  if [[ -f ~/.bashrc ]] && ! grep -q "ANTHROPIC_API_KEY" ~/.bashrc; then
-    echo "export ANTHROPIC_API_KEY=\"$CLAUDE_INSTALL_TOKEN\"" >> ~/.bashrc
-    echo "Authentication configured - will be available in new shell sessions"
-  else
-    echo "Authentication already configured"
-  fi
+  cat > "$CLAUDE_CONFIG_FILE" << EOF
+{
+  "numStartups": 1,
+  "installMethod": "native",
+  "autoUpdates": false,
+  "customApiKeyResponses": {
+    "approved": [],
+    "rejected": []
+  },
+  "tipsHistory": {},
+  "cachedStatsigGates": {
+    "tengu_disable_bypass_permissions_mode": false
+  },
+  "firstStartTime": "2025-08-27T18:02:53.254773Z",
+  "userID": "${CLAUDE_USER_ID}",
+  "projects": {},
+  "autoUpdatesProtectedForNative": true,
+  "oauthAccount": {
+    "accountUuid": "${CLAUDE_ACCOUNT_UUID}",
+    "emailAddress": "${CLAUDE_EMAIL}",
+    "organizationUuid": "${CLAUDE_ORG_UUID}",
+    "organizationRole": "admin",
+    "workspaceRole": null,
+    "organizationName": "${CLAUDE_EMAIL}'s Organization"
+  },
+  "claudeCodeFirstTokenDate": "2025-08-27T18:02:53.254773Z",
+  "recommendedSubscription": "",
+  "shiftEnterKeyBindingInstalled": true,
+  "hasCompletedOnboarding": true,
+  "lastOnboardingVersion": "1.0.110",
+  "hasOpusPlanDefault": false,
+  "subscriptionNoticeCount": 0,
+  "hasAvailableSubscription": false,
+  "hasIdeOnboardingBeenShown": {
+    "vscode": true
+  },
+  "s1mAccessCache": {},
+  "isQualifiedForDataSharing": false,
+  "fallbackAvailableWarningThreshold": 0.5
+}
+EOF
+
+  echo "✅ Claude configuration created with your account details"
 else
-  echo "No CLAUDE_INSTALL_TOKEN found - manual login required"
+  echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
 
-echo "Claude Code setup complete"
-echo "Open a new terminal to use Claude Code, or run: source ~/.bashrc"
+# Fallback to API key method
+if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
+  echo "Configuring API key authentication..."
+  if [[ -f ~/.bashrc ]] && ! grep -q "ANTHROPIC_API_KEY" ~/.bashrc; then
+    echo "export ANTHROPIC_API_KEY=\"$CLAUDE_INSTALL_TOKEN\"" >> ~/.bashrc
+    echo "API key configured"
+  fi
+fi
+
+echo "🎉 Claude Code setup complete"
+echo "You should be able to run 'claude' immediately without login!"
