@@ -7,6 +7,16 @@ echo "Setting up Claude Code..."
 if ! command -v claude >/dev/null 2>&1; then
   echo "Installing Claude Code..."
   curl -fsSL https://claude.ai/install.sh | bash
+  
+  # Add ~/.local/bin to PATH if not already there
+  if [[ -f ~/.bashrc ]] && ! grep -q '.local/bin' ~/.bashrc; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    echo "Added ~/.local/bin to PATH in .bashrc"
+  fi
+  
+  # Set PATH for current session
+  export PATH="$HOME/.local/bin:$PATH"
+  echo "PATH updated for current session"
 else
   echo "Claude Code already installed"
 fi
@@ -15,6 +25,9 @@ fi
 if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_ORG_UUID:-}" ]]; then
   CLAUDE_CONFIG_FILE="$HOME/.claude.json"
   echo "Creating Claude configuration with environment variables..."
+  
+  # Generate current timestamps
+  CURRENT_TIME=$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)
   
   cat > "$CLAUDE_CONFIG_FILE" << EOF
 {
@@ -29,7 +42,7 @@ if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_
   "cachedStatsigGates": {
     "tengu_disable_bypass_permissions_mode": false
   },
-  "firstStartTime": "2025-08-27T18:02:53.254773Z",
+  "firstStartTime": "${CURRENT_TIME}",
   "userID": "${CLAUDE_USER_ID}",
   "projects": {},
   "autoUpdatesProtectedForNative": true,
@@ -41,7 +54,7 @@ if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_
     "workspaceRole": null,
     "organizationName": "${CLAUDE_EMAIL}'s Organization"
   },
-  "claudeCodeFirstTokenDate": "2025-08-27T18:02:53.254773Z",
+  "claudeCodeFirstTokenDate": "${CURRENT_TIME}",
   "recommendedSubscription": "",
   "shiftEnterKeyBindingInstalled": true,
   "hasCompletedOnboarding": true,
@@ -58,7 +71,7 @@ if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_
 }
 EOF
 
-  echo "✅ Claude configuration created with your account details"
+  echo "✅ Claude configuration created with your account details and current timestamp"
 else
   echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
