@@ -33,14 +33,4 @@ else
 fi
 
 echo "Claude Code setup complete"
-echo ""
-echo "To use Claude Code in the current terminal, reload your shell profile with:  source ~/.bashrc"
-echo ""
-read -p "Would you like me to reload your shell profile now? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Reloading shell..."
-    exec bash
-else
-    echo "No problem! Just run 'source ~/.bashrc' or open a new terminal when ready."
-fi
+echo "Open a new terminal to use Claude Code, or run: source ~/.bashrc"
