@@ -15,6 +15,7 @@ Automated Claude Code setup for GitHub Codespaces with OAuth or API key authenti
 ## Configuration
 - `~/.claude.json` - User/org config
 - `~/.claude/.credentials.json` - OAuth tokens (chmod 600)
+- `~/.claude/settings.json` - Settings (plan mode default)
 - `~/.claude/commands.json` - Custom slash commands
 
 ## Custom Commands

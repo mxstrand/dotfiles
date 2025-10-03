@@ -104,6 +104,23 @@ else
   echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
 
+# Create settings file with plan mode as default
+CLAUDE_SETTINGS_DIR="$HOME/.claude"
+CLAUDE_SETTINGS_FILE="$CLAUDE_SETTINGS_DIR/settings.json"
+
+mkdir -p "$CLAUDE_SETTINGS_DIR"
+echo "Configuring Claude settings (plan mode default)..."
+
+cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
+{
+  "permissions": {
+    "defaultMode": "plan"
+  }
+}
+EOF
+
+echo "✅ Claude settings configured"
+
 # Fallback to API key method
 if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
   echo "Configuring API key authentication..."
