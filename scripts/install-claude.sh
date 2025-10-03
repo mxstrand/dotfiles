@@ -113,5 +113,30 @@ if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
   fi
 fi
 
+# Build and install custom commands
+CLAUDE_COMMANDS_DIR="$HOME/.claude"
+CLAUDE_COMMANDS_FILE="$CLAUDE_COMMANDS_DIR/commands.json"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+BUILD_SCRIPT="$SCRIPT_DIR/build-commands.sh"
+COMMANDS_SOURCE="$REPO_DIR/claude-commands.json"
+
+mkdir -p "$CLAUDE_COMMANDS_DIR"
+
+# Build commands from markdown files if build script exists
+if [[ -f "$BUILD_SCRIPT" ]]; then
+  echo "Building custom commands from markdown files..."
+  bash "$BUILD_SCRIPT"
+fi
+
+# Install the generated commands.json
+if [[ -f "$COMMANDS_SOURCE" ]]; then
+  echo "Installing Claude custom commands..."
+  cp "$COMMANDS_SOURCE" "$CLAUDE_COMMANDS_FILE"
+  echo "✅ Claude custom commands installed"
+else
+  echo "⚠️  Commands source file not found, skipping custom commands"
+fi
+
 echo "🎉 Claude Code setup complete"
 echo "You should be able to run 'claude' immediately without login!"

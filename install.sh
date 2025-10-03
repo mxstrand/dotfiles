@@ -7,7 +7,7 @@ echo "🚀 Setting up personal development environment..."
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting dotfiles installation" | tee -a "$LOG_FILE"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CLAUDE_INSTALL="$SCRIPT_DIR/install-claude.sh"
+CLAUDE_INSTALL="$SCRIPT_DIR/scripts/install-claude.sh"
 
 echo "📦 Installing Claude Code..."
 if [[ -f "$CLAUDE_INSTALL" ]]; then

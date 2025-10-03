@@ -1,32 +1,30 @@
-# Dotfiles Repository Context
+# Dotfiles Repository
 
-## Purpose
-Automated development environment setup for GitHub Codespaces. Installs and configures Claude Code with optional OAuth or API key authentication.
+Automated Claude Code setup for GitHub Codespaces with OAuth or API key authentication.
 
-## Repository Structure
-- `install.sh` - Main entry point, orchestrates setup
-- `install-claude.sh` - Claude Code installer with dual auth modes
-- `README.md` - User-facing documentation
+## Files
+- `install.sh` - Main entry, orchestrates setup
+- `scripts/install-claude.sh` - Claude installer with dual auth modes
+- `scripts/build-commands.sh` - Builds commands.json from markdown
+- `commands/*.md` - Command prompts (filename = command name)
 
-## Key Patterns
+## Authentication
+**OAuth**: Requires 6 secrets: `CLAUDE_USER_ID`, `CLAUDE_ACCOUNT_UUID`, `CLAUDE_ORG_UUID`, `CLAUDE_EMAIL`, `CLAUDE_ACCESS_TOKEN`, `CLAUDE_REFRESH_TOKEN`
+**API Key**: Requires `CLAUDE_INSTALL_TOKEN`
 
-### Error Handling
-- Use `set -e` or `set -Eeuo pipefail` for bash scripts
-- Log to `/tmp/dotfiles-install.log` for debugging
-- Provide clear status messages with emoji indicators
-
-### Authentication Methods
-1. **OAuth (Interactive Mode)**: Requires 6 Codespace secrets (USER_ID, ACCOUNT_UUID, ORG_UUID, EMAIL, ACCESS_TOKEN, REFRESH_TOKEN)
-2. **API Key (Chat Mode)**: Requires `CLAUDE_INSTALL_TOKEN` secret
-
-### Configuration Files
-- `~/.claude.json` - Main config with user/org details
+## Configuration
+- `~/.claude.json` - User/org config
 - `~/.claude/.credentials.json` - OAuth tokens (chmod 600)
-- Environment variables read from Codespace secrets
+- `~/.claude/commands.json` - Custom slash commands
 
-## Development Guidelines
-- Scripts must work in non-interactive Codespace creation
-- Support both automated (secrets) and manual (login) flows
-- Use `2>&1` for output visibility during setup
-- Add PATH modifications to both session and `~/.bashrc`
-- Test with and without secrets configured
+## Custom Commands
+Create `commands/name.md` with prompt content. Filename becomes `/name` command. First line = description, full content = prompt. Auto-installed during setup.
+
+**Current:** `/docs`, `/save`
+
+## Development
+- Use `set -e` or `set -Eeuo pipefail`
+- Log to `/tmp/dotfiles-install.log`
+- Scripts must work non-interactively
+- Support automated (secrets) and manual (login) flows
+- Update PATH in session and `~/.bashrc`
