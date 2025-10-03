@@ -21,7 +21,7 @@ Automated Claude Code setup for GitHub Codespaces with OAuth or API key authenti
 ## Custom Commands
 Create `commands/name.md` with prompt content. Filename becomes `/name` command. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/docs`, `/save`
+**Current:** `/docs`, `/save`, `/token`
 
 ## Development
 - Use `set -e` or `set -Eeuo pipefail`
@@ -29,3 +29,5 @@ Create `commands/name.md` with prompt content. Filename becomes `/name` command.
 - Scripts must work non-interactively
 - Support automated (secrets) and manual (login) flows
 - Update PATH in session and `~/.bashrc`
+
+- **Testing**: Run `scripts/test.sh` to validate all scripts
