@@ -19,4 +19,17 @@ else
   exit 1
 fi
 
+# Symlink AGENTS.md to CLAUDE.md if present in workspace
+for AGENTS_FILE in /workspaces/*/AGENTS.md; do
+  if [[ -f "$AGENTS_FILE" ]]; then
+    WORKSPACE_DIR=$(dirname "$AGENTS_FILE")
+    CLAUDE_MD="$WORKSPACE_DIR/CLAUDE.md"
+    if [[ ! -e "$CLAUDE_MD" ]]; then
+      ln -s "$AGENTS_FILE" "$CLAUDE_MD"
+      echo "🔗 Linked AGENTS.md to CLAUDE.md"
+    fi
+    break
+  fi
+done
+
 echo "✅ Dotfiles setup complete!"
