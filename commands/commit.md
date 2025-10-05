@@ -2,7 +2,12 @@
 description: Propose atomic commits for review before pushing
 ---
 
-First, analyze the current branch state and format the output with clear sections:
+First, check the co-author settings and analyze the current branch state, formatting the output with clear sections:
+
+### Co-Author Settings
+Check if `git config trailer.coauthor.command` is set:
+- If set: Display "Status: ✓ Enabled - Claude will be listed as co-author (Co-Authored-By: Claude <noreply@anthropic.com>)"
+- If not set: Display "Status: ✗ Disabled - Claude will not be listed as co-author"
 
 ### Branch Information
 - Current: [branch name]
