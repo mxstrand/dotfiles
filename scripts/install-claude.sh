@@ -115,7 +115,8 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
 {
   "permissions": {
     "defaultMode": "plan"
-  }
+  },
+  "includeCoAuthoredBy": false
 }
 EOF
 
