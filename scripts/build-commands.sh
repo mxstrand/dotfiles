@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-# Copy markdown commands to ~/.claude/commands/ directory
+# Build commands.json from markdown files and copy to ~/.claude/commands/
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 COMMANDS_DIR="$REPO_DIR/commands"
 TARGET_DIR="$HOME/.claude/commands"
+JSON_OUTPUT="$TARGET_DIR/commands.json"
 
 if [[ ! -d "$COMMANDS_DIR" ]]; then
   echo "Error: commands directory not found at $COMMANDS_DIR"
@@ -15,13 +16,34 @@ fi
 # Create target directory if it doesn't exist
 mkdir -p "$TARGET_DIR"
 
-# Copy all markdown files
-copied=0
+# Build JSON using jq for proper escaping
+jq -n '{}' > "$JSON_OUTPUT"
+
 for md_file in "$COMMANDS_DIR"/*.md; do
   if [[ -f "$md_file" ]]; then
+    # Extract command name from filename
+    cmd_name=$(basename "$md_file" .md)
+
+    # Extract description (value on same line as "description:")
+    description=$(grep "^description:" "$md_file" | sed 's/^description: *//')
+
+    # Extract prompt (everything after frontmatter, excluding description line)
+    prompt=$(awk '/^---$/,/^---$/ {next} /^description:/ {next} {print}' "$md_file")
+
+    # Add to JSON using jq
+    tmp=$(mktemp)
+    jq --arg name "$cmd_name" \
+       --arg desc "$description" \
+       --arg prompt "$prompt" \
+       '.[$name] = {description: $desc, prompt: $prompt}' \
+       "$JSON_OUTPUT" > "$tmp"
+    mv "$tmp" "$JSON_OUTPUT"
+
+    # Copy markdown file
     cp "$md_file" "$TARGET_DIR/"
-    copied=$((copied + 1))
   fi
 done
 
+# Count commands
+copied=$(ls "$COMMANDS_DIR"/*.md 2>/dev/null | wc -l)
 echo "✅ Copied $copied command(s) to $TARGET_DIR"

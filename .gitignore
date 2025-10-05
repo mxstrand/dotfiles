@@ -1,8 +1,5 @@
-# Auto-generated files
-claude-commands.json
-
-# Symlinked from AGENTS.md
-CLAUDE.md
+# Symlinked from AGENTS.md (recursively ignore in all directories)
+**/CLAUDE.md
 
 # Claude Code session notes
 .claude-docs/
