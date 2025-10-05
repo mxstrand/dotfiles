@@ -29,4 +29,23 @@ find /workspaces -name "AGENTS.md" -type f 2>/dev/null | while read -r AGENTS_FI
   fi
 done
 
+# Create .claude-docs directory in all git repositories
+find /workspaces -name ".git" -type d 2>/dev/null | while read -r GIT_DIR; do
+  PROJECT_ROOT=$(dirname "$GIT_DIR")
+  CLAUDE_DOCS_DIR="$PROJECT_ROOT/.claude-docs"
+
+  # Skip if already exists
+  if [[ ! -d "$CLAUDE_DOCS_DIR" ]]; then
+    mkdir -p "$CLAUDE_DOCS_DIR"
+    echo "📁 Created .claude-docs at $CLAUDE_DOCS_DIR"
+  fi
+
+  # Add to git exclude if not already present
+  GIT_EXCLUDE="$GIT_DIR/info/exclude"
+  if ! grep -q "^\.claude-docs/$" "$GIT_EXCLUDE" 2>/dev/null; then
+    echo ".claude-docs/" >> "$GIT_EXCLUDE"
+    echo "   Added .claude-docs/ to git exclude"
+  fi
+done
+
 echo "✅ Dotfiles setup complete!"

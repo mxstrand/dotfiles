@@ -141,27 +141,6 @@ COMMANDS_SOURCE="$REPO_DIR/claude-commands.json"
 
 mkdir -p "$CLAUDE_COMMANDS_DIR"
 
-# Create .claude-docs directory at project root and add to git exclude
-PROJECT_ROOT="$PWD"
-while [[ "$PROJECT_ROOT" != "/" ]]; do
-  if [[ -d "$PROJECT_ROOT/.git" ]]; then
-    CLAUDE_DOCS_DIR="$PROJECT_ROOT/.claude-docs"
-    mkdir -p "$CLAUDE_DOCS_DIR"
-    echo "✅ Created .claude-docs directory at $CLAUDE_DOCS_DIR"
-
-    # Add to .git/info/exclude if not already present
-    GIT_EXCLUDE="$PROJECT_ROOT/.git/info/exclude"
-    if [[ -f "$GIT_EXCLUDE" ]] && grep -q "^\.claude-docs/$" "$GIT_EXCLUDE"; then
-      echo "   .claude-docs/ already in git exclude"
-    else
-      echo ".claude-docs/" >> "$GIT_EXCLUDE"
-      echo "   Added .claude-docs/ to git exclude"
-    fi
-    break
-  fi
-  PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
-done
-
 # Build commands from markdown files if build script exists
 if [[ -f "$BUILD_SCRIPT" ]]; then
   echo "Building custom commands from markdown files..."
