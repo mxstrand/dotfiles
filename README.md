@@ -27,32 +27,17 @@ To use these dotfiles with GitHub Codespaces, follow the [official dotfiles setu
 - **Automated Login (Optional):** Configure [Codespace secrets](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) to skip manual login:
 
   1. **First, login manually once** to capture your authentication details
-  2. **Extract the required values** from your local Claude configuration files:
-
-     From `~/.claude.json`:
-     ```bash
-     cat ~/.claude.json | jq -r '.userID'           # CLAUDE_USER_ID
-     cat ~/.claude.json | jq -r '.oauthAccount.accountUuid'     # CLAUDE_ACCOUNT_UUID
-     cat ~/.claude.json | jq -r '.oauthAccount.organizationUuid' # CLAUDE_ORG_UUID
-     cat ~/.claude.json | jq -r '.oauthAccount.emailAddress'     # CLAUDE_EMAIL
-     ```
-
-     From `~/.claude/.credentials.json`:
-     ```bash
-     cat ~/.claude/.credentials.json | jq -r '.claudeAiOauth.accessToken'  # CLAUDE_ACCESS_TOKEN
-     cat ~/.claude/.credentials.json | jq -r '.claudeAiOauth.refreshToken' # CLAUDE_REFRESH_TOKEN
-     ```
-
+  2. **Extract the required values** by running `/tokens` in Claude Code to display all values in the correct format
   3. **Set these as Codespace secrets:**
      - `CLAUDE_USER_ID` - Your Claude user ID
      - `CLAUDE_ACCOUNT_UUID` - Your Claude account UUID
      - `CLAUDE_ORG_UUID` - Your Claude organization UUID
      - `CLAUDE_EMAIL` - Your Claude email address
-     - `CLAUDE_ACCESS_TOKEN` - OAuth access token (enables automatic login)
-     - `CLAUDE_REFRESH_TOKEN` - OAuth refresh token (enables automatic login)
+     - `CLAUDE_ACCESS_TOKEN` - OAuth access token
+     - `CLAUDE_REFRESH_TOKEN` - OAuth refresh token
 
 > [!NOTE]
-> Access and refresh tokens may expire and require manual regeneration and updating.
+> Only `CLAUDE_ACCESS_TOKEN` and `CLAUDE_REFRESH_TOKEN` may expire and require periodic updates. The other values remain static.
 
 ## Custom Commands
 
