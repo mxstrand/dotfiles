@@ -34,6 +34,7 @@ if [[ -n "${CLAUDE_USER_ID:-}" && -n "${CLAUDE_ACCOUNT_UUID:-}" && -n "${CLAUDE_
   "numStartups": 1,
   "installMethod": "native",
   "autoUpdates": false,
+  "theme": "light",
   "customApiKeyResponses": {
     "approved": [],
     "rejected": []
