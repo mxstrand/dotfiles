@@ -3,6 +3,11 @@ set -Eeuo pipefail
 
 # Install MCP (Model Context Protocol) servers for Claude Code
 # Logs to /tmp/dotfiles-install.log
+#
+# IMPORTANT: When using Puppeteer in GitHub Codespaces:
+# - Always use http://localhost (not the Codespace URL) to avoid authentication redirects
+# - Apache runs locally on port 80 within the Codespace
+# - The Codespace URL requires GitHub authentication and won't work with Puppeteer
 
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" | tee -a /tmp/dotfiles-install.log
