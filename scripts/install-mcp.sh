@@ -53,12 +53,20 @@ if sudo apt-get update && sudo apt-get install -y \
     libxfixes3 \
     libxrandr2 \
     libgbm1 \
-    libasound2t64 \
+    libasound2 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcb-dri3-0 \
+    libxss1 \
+    libxtst6 \
+    fonts-liberation \
+    libappindicator3-1 \
     libpango-1.0-0 \
     libcairo2 2>&1 | tee -a /tmp/dotfiles-install.log; then
     log "✓ Chrome dependencies installed successfully"
 else
-    log "WARNING: Failed to install Chrome dependencies (may already be installed)"
+    log "WARNING: Failed to install some Chrome dependencies (may already be installed)"
 fi
 
 # Install Puppeteer locally for custom screenshot scripts
