@@ -105,17 +105,30 @@ else
   echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
 
-# Create settings file with plan mode as default
+# Create settings file with plan mode as default and pre-approved commands
 CLAUDE_SETTINGS_DIR="$HOME/.claude"
 CLAUDE_SETTINGS_FILE="$CLAUDE_SETTINGS_DIR/settings.json"
 
 mkdir -p "$CLAUDE_SETTINGS_DIR"
-echo "Configuring Claude settings (plan mode default)..."
+echo "Configuring Claude settings (plan mode default with pre-approved commands)..."
 
 cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
 {
   "permissions": {
-    "defaultMode": "plan"
+    "defaultMode": "plan",
+    "allow": [
+      "Bash(git status)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(pwd)",
+      "Read(*)"
+    ]
   },
   "includeCoAuthoredBy": false
 }
