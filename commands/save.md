@@ -2,7 +2,7 @@
 description: Save investigation or changes to markdown file
 ---
 
-Given what you've just done, please save your investigation or changes as a markdown file at $ARGUMENTS. If no path was given to you, save to cwd .claude-docs/tmp/YYYY-MM-DD-[brief-topic].md
+Given what you've just done, please save your investigation or changes as a markdown file at $ARGUMENTS. If no path was given to you, save to cwd .claude-docs/YYYY-MM-DD-[brief-topic].md
 
 For filename generation, prioritize: 1) logic/code changes (including tests), 2) config changes, 3) documentation updates. Use brief, descriptive topics (e.g., "auth-fix", "test-suite", "api-refactor").
 

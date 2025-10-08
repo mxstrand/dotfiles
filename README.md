@@ -5,17 +5,21 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 ## What's included
 
 - **[Claude Code](https://www.anthropic.com/claude-code)** - AI-powered development assistant
+- **MCP Server Support** - Puppeteer for browser automation (screenshots, web scraping, testing)
 - Automated installation and optional authentication scripts with error handling
 - Custom slash commands built from markdown files
 - Plan mode enabled by default
+- `.claude-docs/` directory for Claude-accessible scripts and documentation
 
 ## Files
 
-- `install.sh` - Main setup script
+- `install.sh` - Main setup script, creates `.claude-docs/` directories
 - `scripts/install-claude.sh` - Claude Code installer with verification and authentication
+- `scripts/install-mcp.sh` - MCP server installer for Puppeteer browser automation
 - `scripts/build-commands.sh` - Builds custom commands from markdown files
 - `scripts/test.sh` - Test suite for verifying setup
 - `commands/` - Markdown files defining custom slash commands
+- `.claude-docs/` - Git-ignored directory containing scripts accessible to Claude
 
 ## Setup
 
@@ -51,8 +55,11 @@ echo "Your custom prompt here" > commands/mycommand.md
 
 **Built-in commands:**
 - `/docs` - Read and summarize documentation in /docs directory
-- `/save` - Save conversation as markdown plan for next agent
-- `/token` - Output access token and copy to clipboard
+- `/save` - Save conversation as markdown plan for future reference
+- `/endplan` - Save agreed plan to .claude-docs
+- `/commit` - Propose atomic commits for review before pushing
+- `/tokens` - Output access token and copy to clipboard
+- `/setup-browser` - Install Puppeteer MCP server for browser automation
 
 ## Testing
 
