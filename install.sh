@@ -46,6 +46,13 @@ find /workspaces -name ".git" -type d 2>/dev/null | while read -r GIT_DIR; do
     echo ".claude-docs/" >> "$GIT_EXCLUDE"
     echo "   Added .claude-docs/ to git exclude"
   fi
+
+  # Copy install-mcp.sh to dotfiles repo's .claude-docs for easy access
+  if [[ "$PROJECT_ROOT" == "$SCRIPT_DIR" ]] && [[ -f "$SCRIPT_DIR/scripts/install-mcp.sh" ]]; then
+    cp "$SCRIPT_DIR/scripts/install-mcp.sh" "$CLAUDE_DOCS_DIR/"
+    chmod +x "$CLAUDE_DOCS_DIR/install-mcp.sh"
+    echo "📋 Copied install-mcp.sh to $CLAUDE_DOCS_DIR"
+  fi
 done
 
 echo "✅ Dotfiles setup complete!"
