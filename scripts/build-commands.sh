@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-# Build commands.json from markdown files and copy to ~/.claude/commands/
+# Build commands.json from markdown files and copy to ~/.claude/
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 COMMANDS_DIR="$REPO_DIR/commands"
 TARGET_DIR="$HOME/.claude/commands"
-JSON_OUTPUT="$TARGET_DIR/commands.json"
+JSON_OUTPUT="$HOME/.claude/commands.json"
 
 if [[ ! -d "$COMMANDS_DIR" ]]; then
   echo "Error: commands directory not found at $COMMANDS_DIR"

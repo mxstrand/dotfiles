@@ -127,7 +127,10 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Bash(git commit:*)",
       "Bash(ls:*)",
       "Bash(pwd)",
-      "Read(*)"
+      "Bash(bash:*)",
+      "Bash(chmod:*)",
+      "Read(*)",
+      "Read(//home/codespace/.claude/**)"
     ]
   },
   "includeCoAuthoredBy": false
