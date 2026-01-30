@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Build commands.json from markdown files and copy to ~/.claude/
+# Build custom skill definitions from markdown files and copy to ~/.claude/
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 COMMANDS_DIR="$REPO_DIR/commands"
@@ -9,7 +9,7 @@ TARGET_DIR="$HOME/.claude/commands"
 JSON_OUTPUT="$HOME/.claude/commands.json"
 
 if [[ ! -d "$COMMANDS_DIR" ]]; then
-  echo "Error: commands directory not found at $COMMANDS_DIR"
+  echo "Error: skill definitions directory not found at $COMMANDS_DIR"
   exit 1
 fi
 
@@ -21,7 +21,7 @@ jq -n '{}' > "$JSON_OUTPUT"
 
 for md_file in "$COMMANDS_DIR"/*.md; do
   if [[ -f "$md_file" ]]; then
-    # Extract command name from filename
+    # Extract skill name from filename
     cmd_name=$(basename "$md_file" .md)
 
     # Extract description (value on same line as "description:")
@@ -44,6 +44,6 @@ for md_file in "$COMMANDS_DIR"/*.md; do
   fi
 done
 
-# Count commands
+# Count skills
 copied=$(ls "$COMMANDS_DIR"/*.md 2>/dev/null | wc -l)
-echo "✅ Copied $copied command(s) to $TARGET_DIR"
+echo "✅ Copied $copied skill(s) to $TARGET_DIR"

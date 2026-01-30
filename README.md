@@ -7,7 +7,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - **[Claude Code](https://www.anthropic.com/claude-code)** - AI-powered development assistant
 - **MCP Server Support** - Puppeteer for browser automation (screenshots, web scraping, testing)
 - Automated installation and optional authentication scripts with error handling
-- Custom slash commands built from markdown files
+- Custom skills built from markdown files
 - Plan mode enabled by default
 - `.claude-docs/` directory for Claude-accessible scripts and documentation
 
@@ -16,9 +16,9 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - `install.sh` - Main setup script, creates `.claude-docs/` directories
 - `scripts/install-claude.sh` - Claude Code installer with verification and authentication
 - `scripts/install-mcp.sh` - MCP server installer for Puppeteer browser automation
-- `scripts/build-commands.sh` - Builds custom commands from markdown files
+- `scripts/build-commands.sh` - Builds custom skill definitions from markdown files
 - `scripts/test.sh` - Test suite for verifying setup
-- `commands/` - Markdown files defining custom slash commands
+- `commands/` - Skill definition files (directory name kept for CLI compatibility)
 - `.claude-docs/` - Git-ignored directory for Claude-generated documentation and plans
 
 ## Setup
@@ -39,24 +39,24 @@ For automated workflows or if you prefer zero-friction setup, set `ANTHROPIC_API
 - Get your API key from https://console.anthropic.com/settings/keys
 - Note: API usage is significantly more expensive than a Claude.ai Pro subscription for heavy use
 
-## Custom Commands
+## Custom Skills
 
-Add custom slash commands by creating markdown files in `commands/`:
+Add custom skills by creating markdown files in `commands/`:
 
 ```bash
-# Example: commands/mycommand.md
-echo "Your custom prompt here" > commands/mycommand.md
-./scripts/build-commands.sh  # Regenerate commands.json
+# Example: commands/myskill.md (directory named 'commands' for CLI compatibility)
+echo "Your custom prompt here" > commands/myskill.md
+./scripts/build-commands.sh  # Regenerate skill definitions
 ```
 
-**Built-in commands:**
-- `/docs` - Read and summarize documentation in /docs directory
-- `/save` - Save conversation as markdown plan for future reference
-- `/endplan` - Save agreed plan to .claude-docs
-- `/commit` - Propose atomic commits for review before pushing
+**Available skills:**
 - `/browser` - Enable browser automation with Puppeteer MCP server
-- `/secrets` - Display available GitHub secrets and capabilities
+- `/commit` - Propose atomic commits for review before pushing
 - `/doc-style` - Apply user's documentation preferences
+- `/end-plan` - Save agreed plan to .claude-docs
+- `/my-skills` - List all custom skills available in this setup
+- `/save-context` - Save investigation or changes to markdown file
+- `/secrets` - Configure GitHub token and display capabilities
 
 ## Testing
 

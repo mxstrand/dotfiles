@@ -148,13 +148,13 @@ if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
   fi
 fi
 
-# Build and install custom commands
+# Build and install custom skills
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_SCRIPT="$SCRIPT_DIR/build-commands.sh"
 
-# Build commands from markdown files if build script exists
+# Build skill definitions from markdown files if build script exists
 if [[ -f "$BUILD_SCRIPT" ]]; then
-  echo "Building custom commands from markdown files..."
+  echo "Building custom skills from markdown files..."
   bash "$BUILD_SCRIPT"
 fi
 

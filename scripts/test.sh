@@ -8,31 +8,32 @@ REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$REPO_DIR"
 
-# Test 1: Build commands
-echo "1️⃣ Testing command builder..."
+# Test 1: Build skills
+echo "1️⃣ Testing skill builder..."
 ./scripts/build-commands.sh
-if [[ -f claude-commands.json ]]; then
-  echo "   ✅ Commands built successfully"
+JSON_PATH="$HOME/.claude/commands.json"
+if [[ -f "$JSON_PATH" ]]; then
+  echo "   ✅ Skills built successfully"
 else
-  echo "   ❌ Failed to build commands"
+  echo "   ❌ Failed to build skills"
   exit 1
 fi
 
 # Test 2: Verify JSON is valid
 echo "2️⃣ Validating JSON structure..."
-if jq empty claude-commands.json 2>/dev/null; then
+if jq empty "$JSON_PATH" 2>/dev/null; then
   echo "   ✅ Valid JSON"
 else
   echo "   ❌ Invalid JSON"
   exit 1
 fi
 
-# Test 3: Check command count
-echo "3️⃣ Checking commands..."
+# Test 3: Check skill count
+echo "3️⃣ Checking skills..."
 CMD_COUNT=$(ls commands/*.md | wc -l)
-JSON_COUNT=$(jq 'keys | length' claude-commands.json)
+JSON_COUNT=$(jq 'keys | length' "$JSON_PATH")
 if [[ "$CMD_COUNT" -eq "$JSON_COUNT" ]]; then
-  echo "   ✅ All $CMD_COUNT commands generated"
+  echo "   ✅ All $CMD_COUNT skills generated"
 else
   echo "   ❌ Mismatch: $CMD_COUNT .md files but $JSON_COUNT JSON entries"
   exit 1

@@ -5,8 +5,8 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Files
 - `install.sh` - Main entry, orchestrates setup
 - `scripts/install-claude.sh` - Claude installer with dual auth modes
-- `scripts/build-commands.sh` - Builds commands.json from markdown
-- `commands/*.md` - Command prompts (filename = command name)
+- `scripts/build-commands.sh` - Builds skill definitions from markdown
+- `commands/*.md` - Skill definitions (filename = skill name)
 
 ## Authentication
 **Manual login** (default): Run `claude` and login interactively (~30 sec per new Codespace)
@@ -16,12 +16,12 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 - `~/.claude.json` - User/org config
 - `~/.claude/.credentials.json` - OAuth tokens (chmod 600)
 - `~/.claude/settings.json` - Settings (plan mode default)
-- `~/.claude/commands.json` - Custom slash commands
+- `~/.claude/commands.json` - Custom skill definitions (file name kept for CLI compatibility)
 
-## Custom Commands
-Create `commands/name.md` with prompt content. Filename becomes `/name` command. First line = description, full content = prompt. Auto-installed during setup.
+## Custom Skills
+Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/docs`, `/save`, `/commit`, `/endplan`, `/browser`, `/secrets`, `/doc-style`
+**Current:** `/browser`, `/commit`, `/doc-style`, `/end-plan`, `/my-skills`, `/save-context`, `/secrets`
 
 ## Development
 - Use `set -e` or `set -Eeuo pipefail`
