@@ -19,7 +19,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - `scripts/build-commands.sh` - Builds custom commands from markdown files
 - `scripts/test.sh` - Test suite for verifying setup
 - `commands/` - Markdown files defining custom slash commands
-- `.claude-docs/` - Git-ignored directory containing scripts accessible to Claude
+- `.claude-docs/` - Git-ignored directory for Claude-generated documentation and plans
 
 ## Setup
 
@@ -27,21 +27,17 @@ To use these dotfiles with GitHub Codespaces, follow the [official dotfiles setu
 
 ### Authentication
 
-- **Manual Login (Default):** No secrets required - login interactively each time you start a new Codespace
-- **Automated Login (Optional):** Configure [Codespace secrets](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) to skip manual login:
+**Manual Login (Recommended)**
 
-  1. **First, login manually once** to capture your authentication details
-  2. **Extract the required values** by running `/tokens` in Claude Code to display all values in the correct format
-  3. **Set these as Codespace secrets:**
-     - `CLAUDE_USER_ID` - Your Claude user ID
-     - `CLAUDE_ACCOUNT_UUID` - Your Claude account UUID
-     - `CLAUDE_ORG_UUID` - Your Claude organization UUID
-     - `CLAUDE_EMAIL` - Your Claude email address
-     - `CLAUDE_ACCESS_TOKEN` - OAuth access token
-     - `CLAUDE_REFRESH_TOKEN` - OAuth refresh token
+No setup required - just run `claude` and login when prompted. Takes ~30 seconds per new Codespace.
 
-> [!NOTE]
-> Only `CLAUDE_ACCESS_TOKEN` and `CLAUDE_REFRESH_TOKEN` may expire and require periodic updates. The other values remain static.
+This is the simplest and most cost-effective approach, using your existing Claude.ai Pro subscription.
+
+**Alternative: API Key**
+
+For automated workflows or if you prefer zero-friction setup, set `ANTHROPIC_API_KEY` as a [Codespace secret](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces):
+- Get your API key from https://console.anthropic.com/settings/keys
+- Note: API usage is significantly more expensive than a Claude.ai Pro subscription for heavy use
 
 ## Custom Commands
 
@@ -58,8 +54,9 @@ echo "Your custom prompt here" > commands/mycommand.md
 - `/save` - Save conversation as markdown plan for future reference
 - `/endplan` - Save agreed plan to .claude-docs
 - `/commit` - Propose atomic commits for review before pushing
-- `/tokens` - Output access token and copy to clipboard
-- `/setup-browser` - Install Puppeteer MCP server for browser automation
+- `/browser` - Enable browser automation with Puppeteer MCP server
+- `/secrets` - Display available GitHub secrets and capabilities
+- `/doc-style` - Apply user's documentation preferences
 
 ## Testing
 

@@ -1,6 +1,6 @@
 # Dotfiles Repository
 
-Automated Claude Code setup for GitHub Codespaces with OAuth or API key authentication.
+Automated Claude Code setup for GitHub Codespaces with manual login or optional API key.
 
 ## Files
 - `install.sh` - Main entry, orchestrates setup
@@ -9,8 +9,8 @@ Automated Claude Code setup for GitHub Codespaces with OAuth or API key authenti
 - `commands/*.md` - Command prompts (filename = command name)
 
 ## Authentication
-**OAuth**: Requires 6 secrets: `CLAUDE_USER_ID`, `CLAUDE_ACCOUNT_UUID`, `CLAUDE_ORG_UUID`, `CLAUDE_EMAIL`, `CLAUDE_ACCESS_TOKEN`, `CLAUDE_REFRESH_TOKEN`
-**API Key**: Requires `CLAUDE_INSTALL_TOKEN`
+**Manual login** (default): Run `claude` and login interactively (~30 sec per new Codespace)
+**API Key** (optional): Set `ANTHROPIC_API_KEY` secret for automated login (more expensive)
 
 ## Configuration
 - `~/.claude.json` - User/org config
@@ -21,7 +21,7 @@ Automated Claude Code setup for GitHub Codespaces with OAuth or API key authenti
 ## Custom Commands
 Create `commands/name.md` with prompt content. Filename becomes `/name` command. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/docs`, `/save`, `/token`
+**Current:** `/docs`, `/save`, `/commit`, `/endplan`, `/browser`, `/secrets`, `/doc-style`
 
 ## Development
 - Use `set -e` or `set -Eeuo pipefail`
