@@ -1,9 +1,32 @@
 ---
-description: Save investigation or changes to markdown file
+description: Save session context for handoff to next agent
 ---
 
-Given what you've just done, please save your investigation or changes as a markdown file at $ARGUMENTS. If no path was given to you, save to cwd .claude-docs/YYYY-MM-DD-[brief-topic].md
+Save a context handoff document to `.claude-docs/context/YYYY-MM-DD-[brief-topic].md` in current working directory. This creates a checkpoint so the next Claude session can pick up where you left off.
 
-For filename generation, prioritize: 1) logic/code changes (including tests), 2) config changes, 3) documentation updates. Use brief, descriptive topics (e.g., "auth-fix", "test-suite", "api-refactor").
+## Filename Generation
 
-Include key findings or changes with relevant file paths. This is important so that I can verify the findings you've made; there's no need to be verbose, I just need to see how you came to different conclusions.
+- Use brief, descriptive topics related to current work (e.g., "auth-implementation", "bug-investigation", "api-refactor")
+- Format: `YYYY-MM-DD-[topic].md`
+
+## Document Structure
+
+Create a handoff document with:
+
+- **Repository**: [current repo name/path]
+- **Date**: YYYY-MM-DD
+- **Session Summary**: What was accomplished in this session
+- **Current State**: Where the work stands now
+  - What's completed
+  - What's in progress
+  - Key files modified and their current state
+- **Next Steps**: What needs to happen next (ordered list)
+- **Key Findings/Decisions**: Important discoveries or choices made
+- **Blockers/Questions**: Any open issues or uncertainties
+- **File References**: List of relevant files with line numbers where applicable
+
+Keep it concise but complete enough for the next agent to understand the full context and continue seamlessly.
+
+## After Saving
+
+Remind the user: "Context saved locally. The next Claude session can read this to continue where we left off. You can also save to https://github.com/mxstrand/claude-plans for cross-Codespace persistence if desired."

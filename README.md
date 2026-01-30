@@ -53,9 +53,9 @@ echo "Your custom prompt here" > commands/myskill.md
 - `/browser` - Enable browser automation with Puppeteer MCP server
 - `/commit` - Propose atomic commits for review before pushing
 - `/doc-style` - Apply user's documentation preferences
-- `/end-plan` - Save agreed plan to .claude-docs
 - `/my-skills` - List all custom skills available in this setup
-- `/save-context` - Save investigation or changes to markdown file
+- `/save-context` - Save session context for handoff to next agent
+- `/save-plan` - Save plan or design document
 - `/secrets` - Configure GitHub token and display capabilities
 
 ## Testing
