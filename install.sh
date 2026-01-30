@@ -19,8 +19,8 @@ else
   exit 1
 fi
 
-# Symlink AGENTS.md to CLAUDE.md recursively in all workspaces
-find /workspaces -name "AGENTS.md" -type f 2>/dev/null | while read -r AGENTS_FILE; do
+# Symlink AGENTS.md to CLAUDE.md (excluding commands directories)
+find /workspaces -name "AGENTS.md" -type f ! -path "*/commands/*" 2>/dev/null | while read -r AGENTS_FILE; do
   AGENTS_DIR=$(dirname "$AGENTS_FILE")
   CLAUDE_MD="$AGENTS_DIR/CLAUDE.md"
   if [[ ! -e "$CLAUDE_MD" ]]; then
@@ -45,13 +45,6 @@ find /workspaces -name ".git" -type d 2>/dev/null | while read -r GIT_DIR; do
   if ! grep -q "^\.claude-docs/$" "$GIT_EXCLUDE" 2>/dev/null; then
     echo ".claude-docs/" >> "$GIT_EXCLUDE"
     echo "   Added .claude-docs/ to git exclude"
-  fi
-
-  # Copy install-mcp.sh to dotfiles repo's .claude-docs for easy access
-  if [[ "$PROJECT_ROOT" == "/workspaces/dotfiles" ]] && [[ -f "$SCRIPT_DIR/scripts/install-mcp.sh" ]]; then
-    cp "$SCRIPT_DIR/scripts/install-mcp.sh" "$CLAUDE_DOCS_DIR/"
-    chmod +x "$CLAUDE_DOCS_DIR/install-mcp.sh"
-    echo "📋 Copied install-mcp.sh to $CLAUDE_DOCS_DIR"
   fi
 done
 

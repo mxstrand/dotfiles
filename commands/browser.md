@@ -1,13 +1,20 @@
+Enable browser automation with Puppeteer MCP server
+
+Set up and use browser automation capabilities for local development. This enables:
+- Website navigation and screenshot capture
+- Web page interaction (clicking, form filling, scrolling)
+- Frontend testing and debugging
+- Web scraping and data extraction
+- Visual regression testing
+
+## Installation
+
+If Puppeteer MCP server is not yet installed, run the installation script below. Otherwise, skip directly to using the browser automation tools.
+
+Installation script:
+```bash
 #!/usr/bin/env bash
 set -Eeuo pipefail
-
-# Install MCP (Model Context Protocol) servers for Claude Code
-# Logs to /tmp/dotfiles-install.log
-#
-# IMPORTANT: When using Puppeteer in GitHub Codespaces:
-# - Always use http://localhost (not the Codespace URL) to avoid authentication redirects
-# - Apache runs locally on port 80 within the Codespace
-# - The Codespace URL requires GitHub authentication and won't work with Puppeteer
 
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" | tee -a /tmp/dotfiles-install.log
@@ -48,29 +55,29 @@ log "npm version: $(npm --version)"
 # Install Chrome dependencies for Puppeteer (required for headless browser)
 log "Installing Chrome dependencies for Puppeteer..."
 if sudo apt-get update && sudo apt-get install -y \
-    ca-certificates \           # SSL/TLS certificates for HTTPS connections
-    libatk-bridge2.0-0 \        # Accessibility toolkit bridge for assistive technologies
-    libatk1.0-0 \               # Accessibility toolkit for UI components
-    libcups2 \                  # Common UNIX Printing System for print functionality
-    libdrm2 \                   # Direct Rendering Manager for GPU access
-    libxkbcommon0 \             # Keyboard handling library
-    libxcomposite1 \            # X11 Composite extension for window compositing
-    libxdamage1 \               # X11 Damage extension for tracking window changes
-    libxfixes3 \                # X11 fixes extension for cursor and region support
-    libxrandr2 \                # X11 RandR extension for screen resolution/rotation
-    libgbm1 \                   # Generic Buffer Management for GPU buffer allocation
-    libasound2 \                # ALSA sound library for audio support
-    libnspr4 \                  # Netscape Portable Runtime for cross-platform support
-    libnss3 \                   # Network Security Services for SSL/TLS
-    libx11-xcb1 \               # X11 XCB (X protocol C-language Binding) bridge
-    libxcb-dri3-0 \             # X11 DRI3 extension for direct rendering
-    libxss1 \                   # X11 Screen Saver extension
-    libxtst6 \                  # X11 XTEST extension for input event simulation
-    fonts-liberation \          # Liberation fonts (Arial, Times New Roman substitutes)
-    fonts-noto-color-emoji \    # Color emoji font support
-    libappindicator3-1 \        # Application indicators for system tray
-    libpango-1.0-0 \            # Text layout and rendering library
-    libcairo2 2>&1 | tee -a /tmp/dotfiles-install.log; then  # 2D graphics library
+    ca-certificates \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcb-dri3-0 \
+    libxss1 \
+    libxtst6 \
+    fonts-liberation \
+    fonts-noto-color-emoji \
+    libappindicator3-1 \
+    libpango-1.0-0 \
+    libcairo2 2>&1 | tee -a /tmp/dotfiles-install.log; then
     log "✓ Chrome dependencies installed successfully"
 else
     log "WARNING: Failed to install some Chrome dependencies (may already be installed)"
@@ -98,3 +105,26 @@ claude mcp list 2>&1 | tee -a /tmp/dotfiles-install.log || log "Could not list M
 
 log "MCP server installation complete!"
 log "You may need to restart Claude Code for changes to take effect."
+```
+
+## Usage Guidelines
+
+**CRITICAL - GitHub Codespaces URLs:**
+- Always use `http://localhost` (NOT the Codespace forwarded URL)
+- The Codespace public URL requires GitHub authentication and will fail with Puppeteer
+- Apache/nginx runs locally on port 80 within the Codespace
+- Example: `http://localhost:3000` (correct) vs `https://xyz-3000.preview.app.github.dev` (will fail)
+
+**Screenshot Best Practices:**
+- Save all screenshots to `.claude-docs/` directory as PNG files
+- Use Node.js scripts in `/tmp` (where Puppeteer is pre-installed)
+- Example pattern: `.claude-docs/screenshot-$(date +%s).png`
+
+**Common Use Cases:**
+1. **Visual Testing**: Capture screenshots of UI components at different viewport sizes
+2. **Web Scraping**: Extract data from tables, lists, or dynamic content
+3. **Form Testing**: Automate form filling and submission workflows
+4. **Navigation Testing**: Test multi-page flows and user journeys
+5. **Debugging**: Capture state of application at specific breakpoints
+
+After installation (or if already installed), verify the setup works and assist with the user's browser automation task.
