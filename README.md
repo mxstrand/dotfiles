@@ -54,6 +54,7 @@ echo "Your custom prompt here" > commands/myskill.md
 **Available skills:**
 - `/browser` - Enable browser automation with Puppeteer MCP server
 - `/commit` - Propose atomic commits for review before pushing
+- `/consult` - Get second opinions from other AI models on the current discussion
 - `/doc-style` - Apply user's documentation preferences
 - `/my-skills` - List all custom skills available in this setup
 - `/save-context` - Save session context for handoff to next agent
