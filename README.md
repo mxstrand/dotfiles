@@ -6,6 +6,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 
 - **[Claude Code](https://www.anthropic.com/claude-code)** - AI-powered development assistant
 - **MCP Server Support** - Puppeteer for browser automation (screenshots, web scraping, testing)
+- **WireGuard VPN** - On-demand VPN access from Codespaces (requires `WIREGUARD_CONFIG` secret)
 - Automated installation and optional authentication scripts with error handling
 - Custom skills built from markdown files
 - Plan mode enabled by default
@@ -16,6 +17,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - `install.sh` - Main setup script, creates `.claude-docs/` directories
 - `scripts/install-claude.sh` - Claude Code installer with verification and authentication
 - `scripts/install-mcp.sh` - MCP server installer for Puppeteer browser automation
+- `scripts/install-wireguard.sh` - WireGuard VPN installer, loads config from Codespace secret
 - `scripts/build-commands.sh` - Builds custom skill definitions from markdown files
 - `scripts/test.sh` - Test suite for verifying setup
 - `commands/` - Skill definition files (directory name kept for CLI compatibility)
@@ -57,6 +59,7 @@ echo "Your custom prompt here" > commands/myskill.md
 - `/save-context` - Save session context for handoff to next agent
 - `/save-plan` - Save plan or design document
 - `/secrets` - Configure GitHub token and display capabilities
+- `/wireguard` - Manage WireGuard VPN connection
 
 ## Testing
 

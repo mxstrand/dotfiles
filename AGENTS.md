@@ -5,6 +5,7 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Files
 - `install.sh` - Main entry, orchestrates setup
 - `scripts/install-claude.sh` - Claude installer with dual auth modes
+- `scripts/install-wireguard.sh` - WireGuard VPN installer
 - `scripts/build-commands.sh` - Builds skill definitions from markdown
 - `commands/*.md` - Skill definitions (filename = skill name)
 
@@ -21,7 +22,7 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Custom Skills
 Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/browser`, `/commit`, `/doc-style`, `/my-skills`, `/save-context`, `/save-plan`, `/secrets`
+**Current:** `/browser`, `/commit`, `/doc-style`, `/my-skills`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
 
 ## Development
 - Use `set -e` or `set -Eeuo pipefail`

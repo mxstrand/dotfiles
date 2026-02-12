@@ -19,6 +19,15 @@ else
   exit 1
 fi
 
+echo "🔒 Installing WireGuard VPN..."
+WIREGUARD_INSTALL="$SCRIPT_DIR/scripts/install-wireguard.sh"
+if [[ -f "$WIREGUARD_INSTALL" ]]; then
+  chmod +x "$WIREGUARD_INSTALL"
+  "$WIREGUARD_INSTALL" 2>&1
+else
+  echo "⚠️  WireGuard installation script not found (skipping)"
+fi
+
 # Symlink AGENTS.md to CLAUDE.md (excluding commands directories)
 find /workspaces -name "AGENTS.md" -type f ! -path "*/commands/*" 2>/dev/null | while read -r AGENTS_FILE; do
   AGENTS_DIR=$(dirname "$AGENTS_FILE")
