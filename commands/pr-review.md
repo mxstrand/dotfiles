@@ -16,15 +16,15 @@ Extract the GitHub `owner/repo` from the remote URL (handle both HTTPS `https://
 
 ## Step 2: List Open PRs
 
-Fetch all open PRs on the target repo:
+Fetch all open PRs on the target repo authored by you:
 
 ```bash
-gh pr list --repo {owner}/{repo} --state open --json number,title,url,comments,isDraft,reviewDecision,headRefName
+gh pr list --repo {owner}/{repo} --state open --author @me --json number,title,url,comments,isDraft,reviewDecision,headRefName
 ```
 
 Display a numbered list:
 ```
-Open PRs on {owner}/{repo}:
+Open PRs on {owner}/{repo} (authored by you):
 
   1. #42  Add user authentication  [3 comments]
   2. #38  Fix null pointer in checkout  [0 comments]  (draft)
