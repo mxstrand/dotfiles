@@ -187,7 +187,12 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Read(//home/codespace/.claude/**)"
     ]
   },
-  "includeCoAuthoredBy": false
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "alwaysThinkingEnabled": true,
+  "verbose": true
 }
 EOF
 
