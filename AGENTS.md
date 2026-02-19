@@ -22,7 +22,7 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Custom Skills
 Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/my-skills`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
+**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
 
 ## Development
 - Use `set -e` or `set -Eeuo pipefail`
@@ -30,5 +30,5 @@ Create skill definition at `commands/name.md` with prompt content. Filename beco
 - Scripts must work non-interactively
 - Support automated (secrets) and manual (login) flows
 - Update PATH in session and `~/.bashrc`
-
-- **Testing**: Run `scripts/test.sh` to validate all scripts
+- After any change to this repo, review `README.md` for accuracy and update it if needed (file list, skills list, scripts, etc.)
+- Testing: Run `scripts/test.sh` to validate all scripts
