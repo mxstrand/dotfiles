@@ -19,8 +19,10 @@ Extract the GitHub `owner/repo` from the remote URL (handle both HTTPS `https://
 Fetch all open PRs on the target repo authored by you:
 
 ```bash
-gh pr list --repo {owner}/{repo} --state open --author @me --json number,title,url,comments,isDraft,reviewDecision,headRefName
+gh pr list --repo {owner}/{repo} --state open --author @me --json number,title,url,comments,reviews,isDraft,reviewDecision,headRefName
 ```
+
+Compute a combined activity count for display: `(.comments | length) + (.reviews | length)`. This covers both conversation-level comments and code reviews (which carry inline comments). Note: `comments` alone misses inline review comments — always include `reviews`.
 
 Display a numbered list:
 ```
@@ -28,10 +30,10 @@ Open PRs on {owner}/{repo} (authored by you):
 
   1. #42  Add user authentication  [3 comments]
   2. #38  Fix null pointer in checkout  [0 comments]  (draft)
-  3. #35  Refactor API layer  [1 comment]
+  3. #35  Refactor API layer  [1 review]
 ```
 
-Mark drafts, note comment counts (zero-comment PRs are less likely to need review but include them). Ask: *"Which PR would you like to review? (enter number or PR #)"*
+Mark drafts, note activity counts. Ask: *"Which PR would you like to review? (enter number or PR #)"*
 
 ## Step 3: Fetch All Comments
 
