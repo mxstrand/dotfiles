@@ -28,4 +28,30 @@ Check for `MIKE_CODESPACE_TOKEN` (user's personal token with gist+repo permissio
    - Confirm ready to use for gist/repo operations
    - Provide example: "Want me to create a gist? Just ask!"
 
+## Cross-Repo Auth Cheatsheet
+
+The default codespace `GITHUB_TOKEN` only has permissions on the current repo. All operations targeting upstream repos, other user repos, or org repos require `MIKE_CODESPACE_TOKEN`. Use these patterns from the start to avoid auth failures:
+
+**PRs on upstream repos from a fork:**
+```bash
+GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh pr create \
+  --repo {upstream-owner}/{repo} \
+  --head {fork-owner}:{branch-name} \
+  --base main \
+  --title "..." --body "..."
+```
+
+**Pushing to repos outside the current codespace:**
+```bash
+# Set the remote URL with the token before pushing:
+git remote set-url origin "https://x-access-token:${MIKE_CODESPACE_TOKEN}@github.com/{owner}/{repo}.git"
+git push
+```
+
+**All `gh` API/CLI calls to external repos:**
+```bash
+GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/{owner}/{repo}/...
+GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh pr list --repo {owner}/{repo}
+```
+
 **Security Note:** Never display actual token values - only scopes and capabilities.

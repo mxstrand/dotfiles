@@ -14,6 +14,8 @@ Run `git remote -v` to identify available remotes.
 
 Extract the GitHub `owner/repo` from the remote URL (handle both HTTPS `https://github.com/owner/repo.git` and SSH `git@github.com:owner/repo.git` formats).
 
+**Auth:** The default codespace token only has permissions on the current repo. For all `gh` commands targeting upstream/external repos, prefix with `GH_TOKEN="$MIKE_CODESPACE_TOKEN"`. If the env var is not set, run `/secrets` first.
+
 ## Step 2: List Open PRs
 
 Fetch all open PRs on the target repo authored by you:
@@ -131,6 +133,7 @@ Then present each unresolved thread as a card, ordered high → low priority. Us
 
 ---
 
+
 After all cards, include the standard sections:
 
 ### Recommended Changes — Subsequent PR
@@ -170,9 +173,9 @@ Strong preference for **revising existing commits** over adding new incremental 
 
 After the user approves the plan and any implementation is done, handle each actionable thread:
 
-1. **Post the reply** using the REST API:
+1. **Post the reply** using the REST API (requires `MIKE_CODESPACE_TOKEN` for upstream repos):
    ```bash
-   gh api repos/{owner}/{repo}/pulls/{number}/comments/{comment_id}/replies \
+   GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/{owner}/{repo}/pulls/{number}/comments/{comment_id}/replies \
      --method POST --field body="{reply text}"
    ```
 
