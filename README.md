@@ -55,6 +55,8 @@ echo "Your custom prompt here" > commands/myskill.md
 - `/commit` - Propose atomic commits for review before pushing
 - `/consult` - Get second opinions from other AI models on the current discussion
 - `/doc-style` - Apply user's documentation preferences
+- `/echo` - Load your echo (personal working patterns and preferences) into this session
+- `/echo-reflect` - Reflect this session's insights into your echo
 - `/my-skills` - List all custom skills available in this setup
 - `/pr-review` - Fetch and triage PR review comments into a prioritized action plan
 - `/save-context` - Save session context for handoff to next agent
