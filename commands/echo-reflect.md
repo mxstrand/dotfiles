@@ -91,8 +91,11 @@ added: {YYYY-MM-DD}
 {Description sentence}
 
 when:: {when this applies}
+
 except:: {optional — when this pattern does not apply}
+
 from:: {what the agent was doing before the redirection}
+
 to:: {what the human redirected toward}
 ```
 
@@ -117,3 +120,4 @@ Confirm with:
 ```
 Echo updated. {N} entry(ies) written to $ECHO_REPO.
 ```
+
