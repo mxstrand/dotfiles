@@ -162,6 +162,8 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Bash(sed:*)",
       "Bash(awk:*)",
       "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(base64:*)",
       "Bash(which:*)",
       "Bash(whoami)",
       "Bash(env)",
