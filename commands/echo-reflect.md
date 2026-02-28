@@ -20,9 +20,9 @@ Then fetch and read each file's content. If the `patterns/` directory doesn't ex
 
 ## Step 2: Analyze the Session
 
-**Scan for redirection moments first** — places where the human steered the agent off its presented course. These are the highest-value signals. For each, capture what the agent was doing (`from::`) and what the human redirected toward (`to::`).
+**Scan for moments where AI agent behavior and actual needs diverged** — visible as a redirect, a reframing question, or a correction. These are the highest-value signals. For each, capture what the agent was doing (`from::`) and what the human moved toward instead (`to::`).
 
-Then look for any strong preferences that didn't surface through redirection — durable signals about how the human likes to work, think, or communicate.
+Then look for any strong preferences that didn't surface as an explicit divergence — durable signals about how the human likes to work, think, or communicate.
 
 Focus on signals likely to apply across many future sessions, not one-off task details.
 
@@ -47,8 +47,8 @@ Show only non-duplicate candidates, one at a time. Format each as a card:
 
 **when::** {context in which this pattern applies}
 **except::** {optional — situations where this pattern does not apply or should be suppressed}
-**from::** {what the agent was doing or presenting before the redirection}
-**to::** {what the human redirected toward}
+**from::** {what the agent was doing when the divergence became visible}
+**to::** {what the human moved toward instead}
 
 {If Refinement — show the existing entry and the proposed change side by side}
 
@@ -120,4 +120,5 @@ Confirm with:
 ```
 Echo updated. {N} entry(ies) written to $ECHO_REPO.
 ```
+
 
