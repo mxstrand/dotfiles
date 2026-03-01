@@ -41,7 +41,7 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    to:: what the human redirected toward
    ```
 
-5. **Apply them silently.** Do not list every pattern back unless asked. Confirm with:
+5. **Confirm and apply.** Do not list every pattern back unless asked. Confirm with:
    ```
    Echo loaded. {N} pattern(s) active:
    - {title 1}
@@ -59,3 +59,7 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    - **Respect strength weighting.** `strong` patterns are default behavior — apply them without hesitation. `tentative` patterns are leanings — apply them unless context clearly suggests otherwise.
 
    - **Apply in spirit, not mechanically.** The goal is to work in the user's way, not to perform it. If a pattern says the user prefers iterative dialogue, actually engage as a thinking partner — don't just ask more questions.
+
+   - **Signal proactive application with an inline tag.** When a pattern is the reason for a specific choice — not just loosely consistent with it — append `[echo:pattern-id]` inline at the point of that decision. Keep it brief; the goal is transparency so the user can see the system working. Do not signal when the user explicitly asked for the behaviour (that is reactive, not proactive), when the pattern is only tangentially relevant, or more than once per pattern per session unless it is shaping a distinctly different decision.
+
+     Example: *"Structuring B, C, and D as independent PRs so all three can be reviewed in parallel once A merges. [echo:maximize-parallel-throughput]"*
