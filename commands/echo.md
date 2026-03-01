@@ -47,7 +47,7 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    - {title 1}
    - {title 2}
    ...
-   Working in sync with your way.
+   Working in sync with your way. When I apply a pattern proactively, I will tag it inline as [echo:pattern-id] so you can see the system working.
    ```
 
 6. **Apply patterns throughout the session** using these principles:
