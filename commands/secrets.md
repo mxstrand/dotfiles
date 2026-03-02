@@ -6,15 +6,15 @@ Check for `MIKE_CODESPACE_TOKEN` (user's personal token with gist+repo permissio
 
 ## Tasks
 
-1. **Check for MIKE_CODESPACE_TOKEN:**
-   - This is the expected Codespace secret with `gist` and `repo` scopes
-   - If found, export it as `GH_TOKEN` so `gh` CLI uses it by default
-   - If not found, warn that gist/multi-repo operations won't work
+1. **Set up MIKE_CODESPACE_TOKEN:**
+   - Export it immediately: `export GH_TOKEN="$MIKE_CODESPACE_TOKEN"`
+   - Do NOT check for its existence with `${}`, `||`, `&&`, or any compound syntax — just export and proceed
 
 2. **Test capabilities with the token:**
-   - Run `GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh auth status` to show scopes
-   - Verify gist access: `GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh gist list --limit 3`
-   - Display authenticated user and available scopes
+   - Run `gh auth status` to show scopes and confirm which token is active
+   - If output shows `(GH_TOKEN)` with `gist` and `repo` scopes, the personal token is active
+   - If not, warn that gist/multi-repo operations may not work
+   - Verify gist access: `gh gist list --limit 3`
 
 3. **Summarize what you can do:**
    Based on detected scopes, confirm you can:
