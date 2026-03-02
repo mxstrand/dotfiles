@@ -2,9 +2,11 @@
 description: Reflect this session's insights into your echo
 ---
 
-Analyze the current session, identify 2-3 dominant patterns, compare against existing echo entries, and write approved findings to the echo repo (`$ECHO_REPO`).
+Analyze how echo patterns influenced this session, then identify new or refined patterns. Produces two artifacts: a usage report and (optionally) updated pattern entries.
 
-## Step 1: Fetch Current Echo
+## Phase 1: Usage Report
+
+### Step 1.1: Fetch Current Echo
 
 Check for required secrets. If either is missing, stop with a clear message:
 - `ECHO_REPO` — the echo repository (e.g. `owner/repo`)
@@ -18,22 +20,85 @@ GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns \
 
 Then fetch and read each file's content. If the `patterns/` directory doesn't exist, treat existing patterns as empty.
 
-## Step 2: Analyze the Session
+### Step 1.2: Classify Each Pattern's Influence
+
+For every loaded pattern, classify its role in this session using this taxonomy:
+
+- **corrective** — the pattern prevented or corrected an error the agent was already making
+- **generative** — the pattern shaped work proactively from the start
+- **contextual** — the pattern applied but was modulated or overridden by specific context
+- **dormant** — loaded but did not apply to this session's work
+
+For each pattern, write a brief narrative (1-2 sentences) explaining how it influenced the work — or why it was dormant. This narrative is the human-readable layer; the classification is the machine-readable layer.
+
+### Step 1.3: Write the Usage Report
+
+Generate a usage report and write it to `$ECHO_REPO` at `usage/{date}-{slug}.md`.
+
+**Anonymization rules:** Never reference specific repositories, organizations, businesses, product names, or other identifying information. Describe work generically: "port API endpoint to matching repo," not "port deletePicture to linkorb/userbase2."
+
+**File format:**
+
+```markdown
+---
+id: usage-{YYYY-MM-DD}-{slug}
+date: {YYYY-MM-DD}
+task_summary: {one-line anonymized description of the session's work}
+patterns_loaded: {N}
+patterns:
+  - id: {pattern-id}
+    influence: {corrective|generative|contextual|dormant}
+    note: {optional — brief explanation, especially for corrective/contextual/dormant}
+  - id: {pattern-id}
+    influence: {influence-type}
+  # ... all loaded patterns
+refinements_proposed: {N}
+refinements_accepted: {N}
+---
+
+## Usage Narrative
+
+{Per-pattern narrative — how each pattern shaped (or didn't shape) the session's work. Group by influence type: corrective first, then generative, contextual, dormant.}
+```
+
+**Write the file:**
+```bash
+GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
+  --method PUT \
+  --field message="usage: {slug}" \
+  --field content="$(printf '%s' '{full file content}' | base64 -w0)"
+```
+
+If the `usage/` directory does not yet exist, the GitHub API will create it automatically with the first file.
+
+Confirm: `Usage report written to $ECHO_REPO/usage/{filename}.md`
+
+---
+
+## Phase 2: Pattern Reflection
+
+### Step 2.1: Analyze the Session for Pattern Candidates
+
+Using the usage analysis from Phase 1 as context:
 
 **Scan for moments where AI agent behavior and actual needs diverged** — visible as a redirect, a reframing question, or a correction. These are the highest-value signals. For each, capture what the agent was doing (`from::`) and what the human moved toward instead (`to::`).
+
+Patterns with **corrective** influence are strong refinement candidates — the agent needed correction, which may indicate the pattern's `when::` or `except::` clause is too narrow.
+
+Patterns with **contextual** influence are candidates for `except::` refinements — the pattern applied but context overrode it.
 
 Then look for any strong preferences that didn't surface as an explicit divergence — durable signals about how the human likes to work, think, or communicate.
 
 Focus on signals likely to apply across many future sessions, not one-off task details.
 
-## Step 3: Classify Against Existing Echo
+### Step 2.2: Classify Against Existing Echo
 
 For each candidate, compare against existing patterns and classify:
 - **Duplicate** — already well-captured; skip
 - **Refinement** — extends or sharpens an existing entry; propose an update
 - **Net-new** — not yet in echo; propose as a new entry
 
-## Step 4: Present for Review
+### Step 2.3: Present for Review
 
 Show only non-duplicate candidates, one at a time. Format each as a card:
 
@@ -58,7 +123,9 @@ Show only non-duplicate candidates, one at a time. Format each as a card:
 
 Wait for user response before showing the next candidate. If the user says "edit", accept their revised wording before continuing.
 
-## Writing Rules
+If no candidates are found, say: `No new patterns or refinements identified this session.` and skip to confirmation.
+
+### Writing Rules
 
 - **Title:** Present-tense truth statement, not a noun phrase.
   - ✅ `Names carry conceptual weight`
@@ -74,9 +141,9 @@ Wait for user response before showing the next candidate. If the user says "edit
   - ✅ `agent presents functionally adequate options and moves toward selecting one`
   - ❌ `agent suggested "codex" and "playbook"`
 
-## Step 5: Write Approved Entries to Echo
+### Step 2.4: Write Approved Entries to Echo
 
-For each approved entry, create a new file at `patterns/{id}.md` in `$ECHO_REPO`.
+For each approved entry, create or update a file at `patterns/{id}.md` in `$ECHO_REPO`.
 
 **File content:**
 ```markdown
@@ -116,9 +183,16 @@ GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{id}.
   --field sha="{sha}"
 ```
 
-Confirm with:
+---
+
+## Confirmation
+
+Summarize both phases:
+
 ```
-Echo updated. {N} entry(ies) written to $ECHO_REPO.
+Echo reflected.
+- Usage report: $ECHO_REPO/usage/{filename}.md
+- Patterns: {N} added, {N} refined, {N} skipped
 ```
 
-
+Update the `refinements_proposed` and `refinements_accepted` counts in the usage report frontmatter to reflect the final outcome.
