@@ -16,9 +16,13 @@ mapfile -t new_entries < <(
 
 [[ ${#new_entries[@]} -eq 0 ]] && exit 0
 
-echo ""
-echo "⚙️  ${#new_entries[@]} permission rule(s) in settings.local.json not in global settings.json:"
+# Output additionalContext JSON — Claude Code injects this into Claude's context
+# on the next turn so it can surface the findings in its response.
+# (Hooks run without a tty in Codespaces, so /dev/tty and plain stdout don't reach the user.)
+msg="⚙️ ${#new_entries[@]} permission rule(s) in .claude/settings.local.json not yet in global settings.json:"
 for entry in "${new_entries[@]}"; do
-  echo "   $entry"
+  msg+=$'\n'"  $entry"
 done
-echo "   → Consider promoting these to dotfiles scripts/install-claude.sh"
+msg+=$'\n'"  → Consider promoting these to dotfiles/scripts/install-claude.sh"
+
+jq -n --arg msg "$msg" '{"additionalContext": $msg}'
