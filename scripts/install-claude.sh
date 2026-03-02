@@ -127,7 +127,28 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
   "permissions": {
     "defaultMode": "plan",
     "allow": [
-      "Bash(git:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git show:*)",
+      "Bash(git stash:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git rev-list:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git tag:*)",
+      "Bash(git cherry-pick:*)",
       "Bash(ls:*)",
       "Bash(pwd)",
       "Bash(chmod:*)",
@@ -191,14 +212,7 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh gist:*)",
       "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh api:*)"
     ],
-    "deny": [
-      "Bash(git push --force:*)",
-      "Bash(git push -f:*)",
-      "Bash(git reset --hard:*)",
-      "Bash(git clean -f:*)",
-      "Bash(git branch -D:*)",
-      "Bash(rm -rf:*)"
-    ]
+    "deny": []
   },
   "hooks": {
     "Stop": [
