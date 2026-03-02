@@ -79,7 +79,6 @@ EOF
     CLAUDE_CREDS_DIR="$HOME/.claude"
     CLAUDE_CREDS_FILE="$CLAUDE_CREDS_DIR/.credentials.json"
 
-    # Ensure .claude directory exists
     mkdir -p "$CLAUDE_CREDS_DIR"
 
     echo "Creating Claude credentials file..."
@@ -95,7 +94,6 @@ EOF
 }
 EOF
 
-    # Set restrictive permissions like the original
     chmod 600 "$CLAUDE_CREDS_FILE"
     echo "✅ Claude credentials created"
   else
@@ -105,7 +103,19 @@ else
   echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
 
-# Create global settings file with plan mode as default and pre-approved commands
+# Install hook scripts
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+HOOKS_DEST="$HOME/.claude/scripts"
+mkdir -p "$HOOKS_DEST"
+
+if [[ -f "$SCRIPT_DIR/check-permissions.sh" ]]; then
+  cp "$SCRIPT_DIR/check-permissions.sh" "$HOOKS_DEST/check-permissions.sh"
+  chmod +x "$HOOKS_DEST/check-permissions.sh"
+  echo "✅ Installed check-permissions hook"
+fi
+
+# Create global settings file — this is the single source of truth for the allow list.
+# settings.local.json in each project is derived from this (see below).
 CLAUDE_SETTINGS_DIR="$HOME/.claude"
 CLAUDE_SETTINGS_FILE="$CLAUDE_SETTINGS_DIR/settings.json"
 
@@ -186,7 +196,21 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Bash(sudo chown:*)",
       "Bash(sudo chmod:*)",
       "Read(*)",
-      "Read(//home/codespace/.claude/**)"
+      "Read(//home/codespace/.claude/**)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/scripts/check-permissions.sh"
+          }
+        ]
+      }
     ]
   },
   "attribution": {
@@ -200,82 +224,10 @@ EOF
 
 echo "✅ Claude global settings configured"
 
-# Create settings.local.json in each workspace project to prevent the global
-# settings from being silently overridden the first time a "don't ask again"
-# prompt fires and creates a project-local file with only that one rule.
-PERMISSIONS_ALLOW='[
-      "Bash(git status:*)",
-      "Bash(git log:*)",
-      "Bash(git diff:*)",
-      "Bash(git branch:*)",
-      "Bash(git remote:*)",
-      "Bash(git config:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git show:*)",
-      "Bash(git stash:*)",
-      "Bash(git fetch:*)",
-      "Bash(git pull:*)",
-      "Bash(git checkout:*)",
-      "Bash(git switch:*)",
-      "Bash(git rev-list:*)",
-      "Bash(git rev-parse:*)",
-      "Bash(git ls-files:*)",
-      "Bash(ls:*)",
-      "Bash(pwd)",
-      "Bash(chmod:*)",
-      "Bash(npm:*)",
-      "Bash(npx:*)",
-      "Bash(node:*)",
-      "Bash(python:*)",
-      "Bash(python3:*)",
-      "Bash(pip:*)",
-      "Bash(pip3:*)",
-      "Bash(export:*)",
-      "Bash(curl:*)",
-      "Bash(jq:*)",
-      "Bash(cat:*)",
-      "Bash(mkdir:*)",
-      "Bash(cp:*)",
-      "Bash(mv:*)",
-      "Bash(rm:*)",
-      "Bash(touch:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(wc:*)",
-      "Bash(sort:*)",
-      "Bash(grep:*)",
-      "Bash(find:*)",
-      "Bash(sed:*)",
-      "Bash(awk:*)",
-      "Bash(echo:*)",
-      "Bash(printf:*)",
-      "Bash(base64:*)",
-      "Bash(which:*)",
-      "Bash(whoami)",
-      "Bash(env)",
-      "Bash(date)",
-      "Bash(gh:*)",
-      "Bash(GH_TOKEN:*)",
-      "Bash(claude:*)",
-      "Bash(ip:*)",
-      "Bash(journalctl:*)",
-      "Bash(nc:*)",
-      "Bash(sudo wg:*)",
-      "Bash(sudo wg-quick:*)",
-      "Bash(sudo apt-get:*)",
-      "Bash(sudo ls:*)",
-      "Bash(sudo cat:*)",
-      "Bash(sudo test:*)",
-      "Bash(sudo stat:*)",
-      "Bash(sudo mkdir:*)",
-      "Bash(sudo tee:*)",
-      "Bash(sudo chown:*)",
-      "Bash(sudo chmod:*)",
-      "Read(*)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
-    ]'
+# Seed settings.local.json in each workspace project.
+# The allow list is extracted from settings.json — no duplication.
+# Only writes if the file doesn't already exist (respects project-specific overrides).
+ALLOW_ARRAY=$(jq '.permissions.allow' "$CLAUDE_SETTINGS_FILE")
 
 find /workspaces -name ".git" -maxdepth 3 -type d 2>/dev/null | while read -r GIT_DIR; do
   PROJECT_ROOT=$(dirname "$GIT_DIR")
@@ -284,15 +236,8 @@ find /workspaces -name ".git" -maxdepth 3 -type d 2>/dev/null | while read -r GI
 
   mkdir -p "$CLAUDE_DIR"
 
-  # Only write if the file doesn't already exist (respect project-specific overrides)
   if [[ ! -f "$LOCAL_SETTINGS" ]]; then
-    cat > "$LOCAL_SETTINGS" << EOF
-{
-  "permissions": {
-    "allow": $PERMISSIONS_ALLOW
-  }
-}
-EOF
+    printf '{\n  "permissions": {\n    "allow": %s\n  }\n}\n' "$ALLOW_ARRAY" > "$LOCAL_SETTINGS"
     echo "📋 Created $LOCAL_SETTINGS"
   else
     echo "   Skipped $LOCAL_SETTINGS (already exists)"
@@ -311,10 +256,8 @@ if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
 fi
 
 # Build and install custom skills
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_SCRIPT="$SCRIPT_DIR/build-commands.sh"
 
-# Build skill definitions from markdown files if build script exists
 if [[ -f "$BUILD_SCRIPT" ]]; then
   echo "Building custom skills from markdown files..."
   bash "$BUILD_SCRIPT"
