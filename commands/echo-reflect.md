@@ -70,13 +70,14 @@ patterns:
 {Per-pattern narrative — how each pattern shaped (or didn't shape) the session's work. Group by influence type: corrective first, then generative, contextual, dormant. Use ### headings per group.}
 ```
 
-**Write the file** — write content to a temp file first, then encode and push in one call:
+**Write the file** — write content to a temp file first, then encode and push in one call. Capture the SHA from the response for the later frontmatter update:
 ```bash
 printf '%s' '{full file content}' > /tmp/echo-usage.txt
-GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
+USAGE_SHA=$(GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
   --method PUT \
   --field message="usage: {slug}" \
-  --field content="$(base64 -w0 /tmp/echo-usage.txt)"
+  --field content="$(base64 -w0 /tmp/echo-usage.txt)" \
+  --jq '.content.sha')
 ```
 
 If the `usage/` directory does not yet exist, the GitHub API will create it automatically with the first file.
@@ -207,4 +208,12 @@ Echo reflected.
 - Patterns: {N} added, {N} refined, {N} skipped
 ```
 
-Update the `refinements_proposed` and `refinements_accepted` counts in the usage report frontmatter to reflect the final outcome.
+Update the `refinements_proposed` and `refinements_accepted` counts in the usage report frontmatter to reflect the final outcome. Use `$USAGE_SHA` (captured in Step 1.3) as the `sha` field — the GitHub API requires it to update an existing file:
+```bash
+printf '%s' '{updated file content with final counts}' > /tmp/echo-usage-updated.txt
+GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
+  --method PUT \
+  --field message="usage: update counts for {slug}" \
+  --field content="$(base64 -w0 /tmp/echo-usage-updated.txt)" \
+  --field sha="$USAGE_SHA"
+```

@@ -1,4 +1,6 @@
-Enable browser automation with Puppeteer MCP server
+---
+description: Enable browser automation with Puppeteer MCP server
+---
 
 Set up and use browser automation capabilities for local development. This enables:
 - Website navigation and screenshot capture

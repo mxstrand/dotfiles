@@ -14,14 +14,14 @@ Check for `MIKE_CODESPACE_TOKEN` (user's personal token with gist+repo permissio
    - If output shows `(GH_TOKEN)` with `gist` and `repo` scopes, the personal token is active
    - If not, warn that gist/multi-repo operations may not work
 
-3. **Summarize what you can do:**
+2. **Summarize what you can do:**
    Based on detected scopes, confirm you can:
    - ✅ Create/update gists (secret or public)
    - ✅ Read/write across user's repositories
    - ✅ Create issues and PRs
    - ✅ Manage repository content
 
-4. **Set up for session:**
+3. **Set up for session:**
    - Export `GH_TOKEN="$MIKE_CODESPACE_TOKEN"` for the current session
    - Confirm ready to use for gist/repo operations
    - Provide example: "Want me to create a gist? Just ask!"

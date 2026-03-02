@@ -17,9 +17,10 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - `install.sh` - Main setup script, creates `.claude-docs/` directories
 - `scripts/install-claude.sh` - Claude Code installer with verification and authentication
 - `scripts/install-wireguard.sh` - WireGuard VPN installer, loads config from Codespace secret
-- `scripts/build-commands.sh` - Builds custom skill definitions from markdown files
+- `scripts/build-commands.sh` - Copies skill definitions to `~/.claude/commands/`
+- `scripts/check-permissions.sh` - Stop hook: surfaces local allow rules to promote to global
 - `scripts/test.sh` - Test suite for verifying setup
-- `commands/` - Skill definition files (directory name kept for CLI compatibility)
+- `commands/` - Skill definition files (one `.md` per skill)
 - `.claude-docs/` - Git-ignored directory for Claude-generated documentation and plans
 
 ## Setup
@@ -45,9 +46,9 @@ For automated workflows or if you prefer zero-friction setup, set `ANTHROPIC_API
 Add custom skills by creating markdown files in `commands/`:
 
 ```bash
-# Example: commands/myskill.md (directory named 'commands' for CLI compatibility)
+# Example: commands/myskill.md
 echo "Your custom prompt here" > commands/myskill.md
-./scripts/build-commands.sh  # Regenerate skill definitions
+./scripts/build-commands.sh  # Copy to ~/.claude/commands/
 ```
 
 **Available skills:**

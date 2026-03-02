@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 # Stop hook: compares project settings.local.json against global settings.json.
 # Silent when clean. Surfaces new entries as candidates to promote to install-claude.sh.
 

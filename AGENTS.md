@@ -17,7 +17,7 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 - `~/.claude.json` - User/org config
 - `~/.claude/.credentials.json` - OAuth tokens (chmod 600)
 - `~/.claude/settings.json` - Settings (plan mode default)
-- `~/.claude/commands.json` - Custom skill definitions (file name kept for CLI compatibility)
+- `~/.claude/commands/*.md` - Installed skill definitions (copied from `commands/`)
 
 ## Custom Skills
 Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
@@ -25,7 +25,7 @@ Create skill definition at `commands/name.md` with prompt content. Filename beco
 **Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
 
 ## Development
-- Use `set -e` or `set -Eeuo pipefail`
+- Use `set -Eeuo pipefail`
 - Log to `/tmp/dotfiles-install.log`
 - Scripts must work non-interactively
 - Support automated (secrets) and manual (login) flows
