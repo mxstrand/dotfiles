@@ -199,7 +199,11 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Read(//home/codespace/.claude/**)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh:*)",
+      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh auth:*)",
+      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh gist:*)",
+      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh api:*)"
     ]
   },
   "hooks": {
@@ -266,4 +270,5 @@ fi
 
 echo "🎉 Claude Code setup complete"
 echo "You should be able to run 'claude' immediately without login!"
+
 
