@@ -205,6 +205,14 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh auth:*)",
       "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh gist:*)",
       "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh api:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git branch -D:*)",
+      "Bash(rm -rf:*)"
     ]
   },
   "hooks": {
