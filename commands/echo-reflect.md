@@ -15,10 +15,10 @@ Check for required secrets. If either is missing, stop with a clear message:
 List existing pattern files:
 ```bash
 GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns \
-  --jq '[.[] | {name: .name, sha: .sha}]' 2>/dev/null || echo "[]"
+  --jq '[.[] | {name: .name, sha: .sha}]' 2>/dev/null
 ```
 
-Then fetch and read each file's content. If the `patterns/` directory doesn't exist, treat existing patterns as empty.
+Then fetch and read each file's content. If the API returns an error (directory doesn't exist), treat existing patterns as empty — do not use `||` fallback syntax.
 
 ### Step 1.2: Classify Each Pattern's Influence
 
@@ -70,12 +70,13 @@ patterns:
 {Per-pattern narrative — how each pattern shaped (or didn't shape) the session's work. Group by influence type: corrective first, then generative, contextual, dormant. Use ### headings per group.}
 ```
 
-**Write the file:**
+**Write the file** — write content to a temp file first, then encode and push in one call:
 ```bash
+printf '%s' '{full file content}' > /tmp/echo-usage.txt
 GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
   --method PUT \
   --field message="usage: {slug}" \
-  --field content="$(printf '%s' '{full file content}' | base64 -w0)"
+  --field content="$(base64 -w0 /tmp/echo-usage.txt)"
 ```
 
 If the `usage/` directory does not yet exist, the GitHub API will create it automatically with the first file.
@@ -175,20 +176,22 @@ from:: {what the agent was doing before the redirection}
 to:: {what the human redirected toward}
 ```
 
-**Create the file using the GitHub Contents API:**
+**Create the file using the GitHub Contents API** — write content to a temp file first, then encode and push in one call:
 ```bash
+printf '%s' '{full file content}' > /tmp/echo-pattern.txt
 GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{id}.md \
   --method PUT \
   --field message="reflect: add {id}" \
-  --field content="$(printf '%s' '{full file content}' | base64 -w0)"
+  --field content="$(base64 -w0 /tmp/echo-pattern.txt)"
 ```
 
 For **Refinements**, fetch the existing file's `sha` first, then update:
 ```bash
+printf '%s' '{updated file content}' > /tmp/echo-pattern.txt
 GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{id}.md \
   --method PUT \
   --field message="reflect: refine {id}" \
-  --field content="$(printf '%s' '{updated file content}' | base64 -w0)" \
+  --field content="$(base64 -w0 /tmp/echo-pattern.txt)" \
   --field sha="{sha}"
 ```
 
