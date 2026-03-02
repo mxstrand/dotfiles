@@ -39,26 +39,35 @@ Generate a usage report and write it to `$ECHO_REPO` at `usage/{date}-{slug}.md`
 
 **File format:**
 
+The frontmatter contains only flat scalar fields. Per-pattern data lives in a fenced `yaml` code block in the body — this renders vertically on GitHub without horizontal scrolling, while remaining machine-parseable.
+
 ```markdown
 ---
 id: usage-{YYYY-MM-DD}-{slug}
 date: {YYYY-MM-DD}
 task_summary: {one-line anonymized description of the session's work}
 patterns_loaded: {N}
-patterns:
-  - id: {pattern-id}
-    influence: {corrective|generative|contextual|dormant}
-    note: {optional — brief explanation, especially for corrective/contextual/dormant}
-  - id: {pattern-id}
-    influence: {influence-type}
-  # ... all loaded patterns
 refinements_proposed: {N}
 refinements_accepted: {N}
 ---
 
+## Pattern Usage
+
+\`\`\`yaml
+patterns:
+  - id: {pattern-id}
+    influence: {corrective|generative|contextual|dormant}
+    note: {optional — brief explanation, especially for corrective/contextual/dormant}
+
+  - id: {pattern-id}
+    influence: {influence-type}
+
+  # ... all loaded patterns, separated by blank lines for readability
+\`\`\`
+
 ## Usage Narrative
 
-{Per-pattern narrative — how each pattern shaped (or didn't shape) the session's work. Group by influence type: corrective first, then generative, contextual, dormant.}
+{Per-pattern narrative — how each pattern shaped (or didn't shape) the session's work. Group by influence type: corrective first, then generative, contextual, dormant. Use ### headings per group.}
 ```
 
 **Write the file:**
