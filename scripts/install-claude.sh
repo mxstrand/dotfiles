@@ -184,6 +184,9 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Bash(env)",
       "Bash(date)",
       "Bash(gh:*)",
+      "Bash(php:*)",
+      "Bash(composer:*)",
+      "Bash(mysql:*)",
       "Bash(GH_TOKEN:*)",
       "Bash(claude:*)",
       "Bash(ip:*)",
@@ -206,11 +209,7 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(bash scripts/:*)",
-      "Bash(bash /workspaces/:*)",
-      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh:*)",
-      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh auth:*)",
-      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh gist:*)",
-      "Bash(GH_TOKEN=\"$MIKE_CODESPACE_TOKEN\" gh api:*)"
+      "Bash(bash /workspaces/:*)"
     ],
     "deny": []
   },
@@ -258,6 +257,12 @@ find /workspaces -name ".git" -maxdepth 3 -type d 2>/dev/null | while read -r GI
 done
 
 echo "✅ Project settings.local.json files configured"
+
+# Set GH_TOKEN to personal token if available, so all gh commands work without inline env prefix
+if [[ -n "${MIKE_CODESPACE_TOKEN:-}" ]] && ! grep -q 'MIKE_CODESPACE_TOKEN' ~/.bashrc 2>/dev/null; then
+  echo 'export GH_TOKEN="${MIKE_CODESPACE_TOKEN:-$GH_TOKEN}"' >> ~/.bashrc
+  echo "✅ GH_TOKEN configured from MIKE_CODESPACE_TOKEN in .bashrc"
+fi
 
 # Fallback to API key method
 if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
