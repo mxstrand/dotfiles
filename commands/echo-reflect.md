@@ -14,7 +14,7 @@ Check for required secrets. If either is missing, stop with a clear message:
 
 List existing pattern files:
 ```bash
-GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns \
+gh api repos/$ECHO_REPO/contents/patterns \
   --jq '[.[] | {name: .name, sha: .sha}]' 2>/dev/null
 ```
 
@@ -73,7 +73,7 @@ patterns:
 **Write the file** — write content to a temp file first, then encode and push in one call. Capture the SHA from the response for the later frontmatter update:
 ```bash
 printf '%s' '{full file content}' > /tmp/echo-usage.txt
-USAGE_SHA=$(GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
+USAGE_SHA=$(gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
   --method PUT \
   --field message="usage: {slug}" \
   --field content="$(base64 -w0 /tmp/echo-usage.txt)" \
@@ -180,7 +180,7 @@ to:: {what the human redirected toward}
 **Create the file using the GitHub Contents API** — write content to a temp file first, then encode and push in one call:
 ```bash
 printf '%s' '{full file content}' > /tmp/echo-pattern.txt
-GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{id}.md \
+gh api repos/$ECHO_REPO/contents/patterns/{id}.md \
   --method PUT \
   --field message="reflect: add {id}" \
   --field content="$(base64 -w0 /tmp/echo-pattern.txt)"
@@ -189,7 +189,7 @@ GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{id}.
 For **Refinements**, fetch the existing file's `sha` first, then update:
 ```bash
 printf '%s' '{updated file content}' > /tmp/echo-pattern.txt
-GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{id}.md \
+gh api repos/$ECHO_REPO/contents/patterns/{id}.md \
   --method PUT \
   --field message="reflect: refine {id}" \
   --field content="$(base64 -w0 /tmp/echo-pattern.txt)" \
@@ -211,7 +211,7 @@ Echo reflected.
 Update the `refinements_proposed` and `refinements_accepted` counts in the usage report frontmatter to reflect the final outcome. Use `$USAGE_SHA` (captured in Step 1.3) as the `sha` field — the GitHub API requires it to update an existing file:
 ```bash
 printf '%s' '{updated file content with final counts}' > /tmp/echo-usage-updated.txt
-GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
+gh api repos/$ECHO_REPO/contents/usage/{filename}.md \
   --method PUT \
   --field message="usage: update counts for {slug}" \
   --field content="$(base64 -w0 /tmp/echo-usage-updated.txt)" \

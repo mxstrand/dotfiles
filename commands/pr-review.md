@@ -14,7 +14,7 @@ Run `git remote -v` to identify available remotes.
 
 Extract the GitHub `owner/repo` from the remote URL (handle both HTTPS `https://github.com/owner/repo.git` and SSH `git@github.com:owner/repo.git` formats).
 
-**Auth:** The default codespace token only has permissions on the current repo. For all `gh` commands targeting upstream/external repos, prefix with `GH_TOKEN="$MIKE_CODESPACE_TOKEN"`. If the env var is not set, run `/secrets` first.
+**Auth:** The default codespace token only has permissions on the current repo. `GH_TOKEN` is set automatically to `MIKE_CODESPACE_TOKEN` in this environment — all `gh` commands will use it. If `gh auth status` shows missing scopes, run `/secrets` first.
 
 ## Step 2: List Open PRs
 
@@ -173,9 +173,9 @@ Strong preference for **revising existing commits** over adding new incremental 
 
 After the user approves the plan and any implementation is done, handle each actionable thread:
 
-1. **Post the reply** using the REST API (requires `MIKE_CODESPACE_TOKEN` for upstream repos):
+1. **Post the reply** using the REST API:
    ```bash
-   GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/{owner}/{repo}/pulls/{number}/comments/{comment_id}/replies \
+   gh api repos/{owner}/{repo}/pulls/{number}/comments/{comment_id}/replies \
      --method POST --field body="{reply text}"
    ```
 

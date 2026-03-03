@@ -12,14 +12,14 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
 
 2. **List pattern files:**
    ```bash
-   GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns \
+   gh api repos/$ECHO_REPO/contents/patterns \
      --jq '[.[] | .name]'
    ```
    If the directory doesn't exist or is empty, say: *"Your echo is empty — use /echo-reflect after a session to start building it."* and stop.
 
 3. **Fetch each pattern file:**
    ```bash
-   GH_TOKEN="$MIKE_CODESPACE_TOKEN" gh api repos/$ECHO_REPO/contents/patterns/{filename} \
+   gh api repos/$ECHO_REPO/contents/patterns/{filename} \
      --jq '.content | @base64d'
    ```
 
