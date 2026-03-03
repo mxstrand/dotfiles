@@ -7,8 +7,13 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
 ## Steps
 
 1. **Check for required secrets.** If either is missing, stop with a clear message:
-   - `ECHO_REPO` — the echo repository (e.g. `owner/repo`)
+   - `ECHO_REPO` — the echo repository in `owner/repo` format (e.g. `mxstrand/echo`)
    - `MIKE_CODESPACE_TOKEN` — GitHub token with repo access
+
+   Check with:
+   ```bash
+   echo "$ECHO_REPO" && echo "$MIKE_CODESPACE_TOKEN"
+   ```
 
 2. **List pattern files:**
    ```bash
@@ -17,11 +22,12 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    ```
    If the directory doesn't exist or is empty, say: *"Your echo is empty — use /echo-reflect after a session to start building it."* and stop.
 
-3. **Fetch each pattern file:**
+3. **Fetch each pattern file** — make a separate Bash call per file:
    ```bash
    gh api repos/$ECHO_REPO/contents/patterns/{filename} \
      --jq '.content | @base64d'
    ```
+   Do not batch these in a shell loop — individual calls keep each command within pre-approved allow rules.
 
 4. **Parse each pattern.** Each file follows this structure:
    ```markdown

@@ -24,6 +24,14 @@ Create skill definition at `commands/name.md` with prompt content. Filename beco
 
 **Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
 
+## Writing Friction-Free Skill Commands
+
+**Write commands so the first token matches an allow rule.** The allow list matches command prefixes — anything prepended (env vars, variable assignments) creates a new unmatched pattern. Export env vars first or ensure they're in `.bashrc` so bare commands match existing rules.
+
+**Avoid shell expansion in commands.** `$()` and `${}` trigger safety prompts regardless of allow rules. Store secrets and config in ready-to-use format so manipulation isn't needed at call time.
+
+**Don't use broad control-flow allow rules.** `Bash(for:*)` and `Bash(bash:*)` are unsafe — the prefix doesn't constrain what runs inside the loop or script. Use multiple individual Bash calls instead of loops, and reference specific script paths rather than allowing bare `bash`.
+
 ## Development
 - Use `set -Eeuo pipefail`
 - Log to `/tmp/dotfiles-install.log`
