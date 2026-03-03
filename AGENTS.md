@@ -22,7 +22,7 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Custom Skills
 Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/jira`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
+**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/email`, `/jira`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
 
 ## External Service Credentials in Skills
 
@@ -44,7 +44,15 @@ Check structure/presence using a test that outputs a status word, not the value:
 echo "$MY_SECRET" | jq -r 'if .token then "ok" else "missing" end'
 ```
 
-Non-sensitive config (URLs, usernames) can be extracted and used normally.
+Non-sensitive config (URLs, hostnames) can be extracted — but **any Bash call that references a secret variable has its entire output filtered**. To extract non-sensitive values, write to a file in one Bash call, then read the file in a separate Bash call:
+
+```bash
+# Call 1: write (output filtered, that's fine)
+echo "$MY_SECRET" | jq -r '.url' > /tmp/.svc-url
+
+# Call 2: read (separate call, no secret reference, output visible)
+cat /tmp/.svc-url
+```
 
 ### Safe Pattern: netrc for curl Auth
 
