@@ -22,7 +22,43 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Custom Skills
 Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
+**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/jira`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
+
+## External Service Credentials in Skills
+
+Skills that call external APIs receive credentials via environment variables (Codespace secrets). The credential source is defined by each skill — skills document what they expect and how to set it up.
+
+### Security Rule: Credentials Must Not Appear in Output
+
+Claude reads tool output and will inadvertently log or repeat values it sees. **Credentials must never pass through stdout.** Specifically:
+
+- Check that credentials are *present* without printing their values
+- Never extract a secret to a variable that Claude reads, then re-uses in a command
+- Prefer piping credentials directly into the tool that needs them
+
+### Safe Pattern: Verify Without Revealing
+
+Check structure/presence using a test that outputs a status word, not the value:
+
+```bash
+echo "$MY_SECRET" | jq -r 'if .token then "ok" else "missing" end'
+```
+
+Non-sensitive config (URLs, usernames) can be extracted and used normally.
+
+### Safe Pattern: netrc for curl Auth
+
+When authenticating with curl, write credentials to a temp netrc file (jq redirects to file, nothing goes to stdout) and point curl at it:
+
+```bash
+jq -r '"machine example.com\nlogin \(.email)\npassword \(.token)"' \
+  <<< "$MY_SECRET" > /tmp/.svc-netrc
+chmod 600 /tmp/.svc-netrc
+
+curl -s --netrc-file /tmp/.svc-netrc "https://example.com/api/..."
+```
+
+Credentials go from env var → file → curl without ever passing through Claude's context.
 
 ## Writing Friction-Free Skill Commands
 
