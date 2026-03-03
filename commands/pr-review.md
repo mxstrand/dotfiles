@@ -78,7 +78,7 @@ gh api "repos/{owner}/{repo}/issues/{number}/comments" --paginate \
 **Review summaries** (Approve/Request Changes with body text):
 ```bash
 gh pr view {number} --repo {owner}/{repo} --json reviews \
-  --jq '[.reviews[] | select(.body != "")]'
+  --jq '[.reviews[] | select(.body | length > 0)]'
 ```
 
 ## Step 5: Identify Unresolved Threads
