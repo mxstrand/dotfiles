@@ -35,7 +35,7 @@ For each pattern, write a brief narrative (1-2 sentences) explaining how it infl
 
 Generate a usage report and write it to `$ECHO_REPO` at `usage/{date}-{slug}.md`.
 
-**Anonymization rules:** Never reference specific repositories, organizations, businesses, product names, or other identifying information. Describe work generically: "port API endpoint to matching repo," not "port deletePicture to linkorb/userbase2."
+**Anonymization rules:** Never reference specific repositories, organizations, businesses, product names, or other identifying information. Describe work generically: "port API endpoint to matching repo," not "port deletePicture to org/repo."
 
 **File format:**
 
