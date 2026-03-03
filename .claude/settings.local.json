@@ -83,7 +83,13 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(bash scripts/:*)",
-      "Bash(bash /workspaces/:*)"
+      "Bash(bash /workspaces/:*)",
+      "WebSearch",
+      "Bash(printenv:*)",
+      "WebFetch(domain:curl.se)",
+      "WebFetch(domain:everything.curl.dev)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:www.ietf.org)"
     ]
   }
 }
