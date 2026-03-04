@@ -74,6 +74,8 @@ Credentials go from env var → file → curl without ever passing through Claud
 
 **Avoid shell expansion in commands.** `$()` and `${}` trigger safety prompts regardless of allow rules. Store secrets and config in ready-to-use format so manipulation isn't needed at call time.
 
+**Prefer protocol-level batching over N individual calls.** When a protocol or API supports fetching multiple items in one request, use it. Examples: IMAP `UID FETCH uid1,uid2,uid3 (BODY.PEEK[HEADER.FIELDS (...)])` fetches many headers in one curl call; `gh repo clone` with `--depth 1` gets all files locally in one call instead of N API fetches. Individual calls avoid loops, but per-call overhead still compounds — batch at the protocol level first.
+
 **Don't use broad control-flow allow rules.** `Bash(for:*)` and `Bash(bash:*)` are unsafe — the prefix doesn't constrain what runs inside the loop or script. Use multiple individual Bash calls instead of loops, and reference specific script paths rather than allowing bare `bash`.
 
 ## Development

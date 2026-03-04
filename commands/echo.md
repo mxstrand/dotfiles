@@ -15,19 +15,19 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    echo "$ECHO_REPO" && echo "$MIKE_CODESPACE_TOKEN"
    ```
 
-2. **List pattern files:**
+2. **Clone the echo repo** (shallow clone — one call, all files local):
    ```bash
-   gh api repos/$ECHO_REPO/contents/patterns \
-     --jq '[.[] | .name]'
+   gh repo clone $ECHO_REPO /tmp/.echo -- --depth 1 --quiet
+   ```
+   If the clone fails, stop with a clear error message.
+
+3. **Read pattern files locally.** List and read all pattern files from the clone:
+   ```bash
+   ls /tmp/.echo/patterns/
    ```
    If the directory doesn't exist or is empty, say: *"Your echo is empty — use /echo-reflect after a session to start building it."* and stop.
 
-3. **Fetch each pattern file** — make a separate Bash call per file:
-   ```bash
-   gh api repos/$ECHO_REPO/contents/patterns/{filename} \
-     --jq '.content | @base64d'
-   ```
-   Do not batch these in a shell loop — individual calls keep each command within pre-approved allow rules.
+   Read each pattern file using the Read tool (e.g. `/tmp/.echo/patterns/filename.md`). These are local reads — fast, no API calls, no permission prompts.
 
 4. **Parse each pattern.** Each file follows this structure:
    ```markdown

@@ -89,7 +89,9 @@
       "WebFetch(domain:curl.se)",
       "WebFetch(domain:everything.curl.dev)",
       "WebFetch(domain:gist.github.com)",
-      "WebFetch(domain:www.ietf.org)"
+      "WebFetch(domain:www.ietf.org)",
+      "Bash(xxd:*)",
+      "Bash(echo $CREDS_FOR_AGENTS:*)"
     ]
   }
 }
