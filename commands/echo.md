@@ -34,7 +34,7 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    ---
    id: kebab-case-id
    category: communication | workflow | tooling | ...
-   strength: strong | tentative
+   strength: core | contextual
    added: YYYY-MM-DD
    ---
 
@@ -62,7 +62,7 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
 
    - **Apply proactively, not reactively.** Patterns are a lens to work through from the start of every response, not triggers to watch for. Don't wait for the user to exhibit a behavior before honoring the pattern.
 
-   - **Respect strength weighting.** `strong` patterns are default behavior — apply them without hesitation. `tentative` patterns are leanings — apply them unless context clearly suggests otherwise.
+   - **Respect strength weighting.** `core` patterns shape how you think and operate across the entire session — apply them without hesitation. `contextual` patterns are decisive when their trigger context fits but inert in most sessions — apply them fully when the `when::` condition matches, don't force them when it doesn't.
 
    - **Apply in spirit, not mechanically.** The goal is to work in the user's way, not to perform it. If a pattern says the user prefers iterative dialogue, actually engage as a thinking partner — don't just ask more questions.
 
