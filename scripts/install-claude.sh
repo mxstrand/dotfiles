@@ -103,6 +103,45 @@ else
   echo "⚠️  Missing Claude environment variables - falling back to API key method"
 fi
 
+# Clone echo repo for commands and working patterns
+ECHO_DIR="$HOME/.echo"
+
+if [[ -n "${ECHO_REPO:-}" ]]; then
+  if [[ -d "/workspaces/echo" ]]; then
+    # Inside the echo codespace — symlink instead of cloning
+    ln -sfn /workspaces/echo "$ECHO_DIR"
+    echo "🔗 Linked ~/.echo → /workspaces/echo (echo codespace detected)"
+  elif [[ ! -d "$ECHO_DIR" ]]; then
+    echo "📦 Cloning echo repo..."
+    if git clone "$ECHO_REPO" "$ECHO_DIR" 2>&1; then
+      echo "✅ Echo cloned to $ECHO_DIR"
+    else
+      echo "❌ Failed to clone echo repo from ECHO_REPO — commands will not be available"
+    fi
+  else
+    echo "   ~/.echo already exists — skipping clone"
+  fi
+else
+  echo "⚠️  ECHO_REPO secret not set — skipping echo setup"
+fi
+
+# Configure VS Code to discover echo repo in source control
+VSCODE_MACHINE_SETTINGS="/home/codespace/.vscode-remote/data/Machine/settings.json"
+
+if [[ -f "$VSCODE_MACHINE_SETTINGS" && -d "$ECHO_DIR" ]]; then
+  # Add ~/.echo to git.scanRepositories if not already present
+  if command -v jq >/dev/null 2>&1; then
+    ECHO_ABS=$(readlink -f "$ECHO_DIR")
+    CURRENT=$(jq -r '.["git.scanRepositories"] // [] | .[]' "$VSCODE_MACHINE_SETTINGS" 2>/dev/null)
+    if ! echo "$CURRENT" | grep -qF "$ECHO_ABS"; then
+      jq --arg path "$ECHO_ABS" '.["git.scanRepositories"] = ((.["git.scanRepositories"] // []) + [$path])' \
+        "$VSCODE_MACHINE_SETTINGS" > "${VSCODE_MACHINE_SETTINGS}.tmp" \
+        && mv "${VSCODE_MACHINE_SETTINGS}.tmp" "$VSCODE_MACHINE_SETTINGS"
+      echo "🔍 Added $ECHO_ABS to VS Code git.scanRepositories"
+    fi
+  fi
+fi
+
 # Install hook scripts
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 HOOKS_DEST="$HOME/.claude/scripts"
@@ -273,12 +312,27 @@ if [[ -n "${CLAUDE_INSTALL_TOKEN:-}" ]]; then
   fi
 fi
 
-# Build and install custom skills
-BUILD_SCRIPT="$SCRIPT_DIR/build-commands.sh"
+# Symlink commands from echo into Claude's commands directory
+ECHO_COMMANDS="$ECHO_DIR/commands"
+CLAUDE_COMMANDS="$HOME/.claude/commands"
 
-if [[ -f "$BUILD_SCRIPT" ]]; then
-  echo "Building custom skills from markdown files..."
-  bash "$BUILD_SCRIPT"
+if [[ -d "$ECHO_COMMANDS" ]]; then
+  mkdir -p "$CLAUDE_COMMANDS"
+  # Remove stale symlinks pointing into echo commands (handles renamed/deleted commands)
+  for existing in "$CLAUDE_COMMANDS"/*.md; do
+    if [[ -L "$existing" ]] && readlink "$existing" | grep -q "$ECHO_COMMANDS"; then
+      rm "$existing"
+    fi
+  done
+  for md_file in "$ECHO_COMMANDS"/*.md; do
+    if [[ -f "$md_file" ]]; then
+      ln -sf "$md_file" "$CLAUDE_COMMANDS/$(basename "$md_file")"
+    fi
+  done
+  linked=$(ls "$ECHO_COMMANDS"/*.md 2>/dev/null | wc -l)
+  echo "🔗 Symlinked $linked command(s) from echo to $CLAUDE_COMMANDS"
+else
+  echo "⚠️  No echo commands found at $ECHO_COMMANDS — skipping symlinks"
 fi
 
 echo "🎉 Claude Code setup complete"

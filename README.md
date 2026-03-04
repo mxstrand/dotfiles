@@ -8,7 +8,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - **MCP Server Support** - Puppeteer for browser automation (screenshots, web scraping, testing)
 - **WireGuard VPN** - On-demand VPN access from Codespaces (requires `WIREGUARD_CONFIG` secret)
 - Automated installation and optional authentication scripts with error handling
-- Custom skills built from markdown files
+- Custom skills symlinked from [echo](https://github.com/mxstrand/echo) repo
 - Plan mode enabled by default
 - `.claude-docs/` directory for Claude-accessible scripts and documentation
 
@@ -17,10 +17,8 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - `install.sh` - Main setup script, creates `.claude-docs/` directories
 - `scripts/install-claude.sh` - Claude Code installer with verification and authentication
 - `scripts/install-wireguard.sh` - WireGuard VPN installer, loads config from Codespace secret
-- `scripts/build-commands.sh` - Copies skill definitions to `~/.claude/commands/`
 - `scripts/check-permissions.sh` - Stop hook: surfaces local allow rules to promote to global
 - `scripts/test.sh` - Test suite for verifying setup
-- `commands/` - Skill definition files (one `.md` per skill)
 - `.claude-docs/` - Git-ignored directory for Claude-generated documentation and plans
 
 ## Setup
@@ -43,29 +41,11 @@ For automated workflows or if you prefer zero-friction setup, set `ANTHROPIC_API
 
 ## Custom Skills
 
-Add custom skills by creating markdown files in `commands/`:
+Custom skills live in the [echo repo](https://github.com/mxstrand/echo) under `commands/`. At install time, dotfiles clones echo to `~/.echo` and symlinks command files into `~/.claude/commands/`.
 
-```bash
-# Example: commands/myskill.md
-echo "Your custom prompt here" > commands/myskill.md
-./scripts/build-commands.sh  # Copy to ~/.claude/commands/
-```
+**Requires:** `ECHO_REPO` codespace secret set to the echo repo clone URL (e.g., `https://github.com/mxstrand/echo`).
 
-**Available skills:**
-- `/browser` - Enable browser automation with Puppeteer MCP server
-- `/commit` - Propose atomic commits for review before pushing
-- `/consult` - Get second opinions from other AI models on the current discussion
-- `/doc-style` - Apply user's documentation preferences
-- `/echo` - Load your echo (personal working patterns and preferences) into this session
-- `/echo-reflect` - Reflect this session's insights into your echo
-- `/email` - Check, read, and manage email via IMAP (no sending)
-- `/jira` - Interact with Jira Cloud via natural language using the REST API
-- `/my-skills` - List all custom skills available in this setup
-- `/pr-review` - Fetch and triage PR review comments into a prioritized action plan
-- `/save-context` - Save session context for handoff to next agent
-- `/save-plan` - Save plan or design document
-- `/secrets` - Configure GitHub token and display capabilities
-- `/wireguard` - Manage WireGuard VPN connection
+See the echo repo for the full list of available skills.
 
 ## Testing
 
