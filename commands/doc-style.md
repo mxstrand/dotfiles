@@ -6,7 +6,10 @@ When writing documentation:
 
 **Format**: Always use Markdown
 
-**Code samples**: Exclude code samples - they duplicate the actual implementation. Focus on explaining reasoning, purpose, and concepts. If helpful, reference specific files using `file:line` format instead.
+**Code samples**: Depends on document type.
+
+- Implementation plans (proposals, migration plans, task plans): include code blocks where they add confidence in the approach — before/after examples, conversion patterns, shell commands. Code in plans is the spec; it helps human reviewers evaluate whether the approach will work.
+- Project documentation (architecture guidance, patterns, principles, general how-tos): exclude code blocks. Focus on explaining reasoning, purpose, and concepts. Reference specific files using `file:line` format if precision is needed.
 
 **Formatting**: Use bold sparingly. No bold prefixes in lists unless requested.
 
