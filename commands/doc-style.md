@@ -10,4 +10,6 @@ When writing documentation:
 
 **Formatting**: Use bold sparingly. No bold prefixes in lists unless requested.
 
+**Tables**: Always pad columns with spaces so they are evenly aligned and human-readable in plain/unformatted view. Every column should be as wide as its widest cell.
+
 **Sources**: Include markdown links for external references.
