@@ -113,7 +113,7 @@ if [[ -n "${ECHO_REPO:-}" ]]; then
     echo "🔗 Linked ~/.echo → /workspaces/echo (echo codespace detected)"
   elif [[ ! -d "$ECHO_DIR" ]]; then
     echo "📦 Cloning echo repo..."
-    if git clone "$ECHO_REPO" "$ECHO_DIR" 2>&1; then
+    if gh repo clone "$ECHO_REPO" "$ECHO_DIR" 2>&1; then
       echo "✅ Echo cloned to $ECHO_DIR"
     else
       echo "❌ Failed to clone echo repo from ECHO_REPO — commands will not be available"
