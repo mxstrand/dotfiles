@@ -1,8 +1,8 @@
 ---
-description: Load your echo — personal working patterns and preferences into this session
+description: Load your echo — personal working patterns, directives, and workflows into this session
 ---
 
-Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and apply them to this session.
+Load the user's personal working patterns, directives, and workflows from the echo repo (`$ECHO_REPO`) and apply them to this session.
 
 ## Steps
 
@@ -47,16 +47,32 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    to:: what the human redirected toward
    ```
 
-5. **Confirm and apply.** Do not list every pattern back unless asked. Confirm with:
+5. **Check for workflows.** List workflow files from the clone:
+   ```bash
+   ls /tmp/.echo/workflows/ 2>/dev/null
+   ```
+   If workflows exist, ask which to activate:
+   ```
+   Available workflows: triage, plan, implement, verify, ship, review
+   Activate a workflow? (name / none)
+   ```
+   If the user selects a workflow, read the workflow file (e.g. `/tmp/.echo/workflows/plan.md`). Then read each directive file it references (e.g. `/tmp/.echo/directives/{id}.md`). These are local reads from the clone.
+
+   If no workflows directory exists, skip this step.
+
+6. **Confirm and apply.** Do not list every pattern back unless asked. Confirm with:
    ```
    Echo loaded. {N} pattern(s) active:
    - {title 1}
    - {title 2}
    ...
+   {If workflow active:}
+   Workflow active: {phase name} ({N} directives)
+
    Working in sync with your way. When I apply a pattern proactively, I will tag it inline as [echo:pattern-id] so you can see the system working.
    ```
 
-6. **Apply patterns throughout the session** using these principles:
+7. **Apply patterns and directives throughout the session** using these principles:
 
    - **Internalize the "because", not just the behavior.** Each pattern's description ends with an underlying value. That value is what to apply — it generalizes to situations the pattern never explicitly anticipated.
 
@@ -69,3 +85,5 @@ Load the user's personal working patterns from the echo repo (`$ECHO_REPO`) and 
    - **Signal proactive application with an inline tag.** When a pattern is the reason for a specific choice — not just loosely consistent with it — append `[echo:pattern-id]` inline at the point of that decision. Keep it brief; the goal is transparency so the user can see the system working. Do not signal when the user explicitly asked for the behaviour (that is reactive, not proactive), when the pattern is only tangentially relevant, or more than once per pattern per session unless it is shaping a distinctly different decision.
 
      Example: *"Structuring B, C, and D as independent PRs so all three can be reviewed in parallel once A merges. [echo:maximize-parallel-throughput]"*
+
+   - **Apply directives within their workflow phase.** When a workflow is active, its directives are standing instructions for that phase. Apply them as defaults — they don't need tagging unless a directive is the reason for a non-obvious choice. Directives are instructions, not behavioral redirects — follow them, don't signal them.
