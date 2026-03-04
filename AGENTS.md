@@ -22,7 +22,7 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Custom Skills
 Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
 
-**Current:** `/browser`, `/commit`, `/consult`, `/doc-style`, `/echo`, `/echo-reflect`, `/email`, `/jira`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
+**Current:** `/browser`, `/commit`, `/consult`, `/cyans`, `/doc-style`, `/echo`, `/echo-reflect`, `/email`, `/jira`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
 
 ## External Service Credentials in Skills
 
