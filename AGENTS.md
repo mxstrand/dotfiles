@@ -6,8 +6,6 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 - `install.sh` - Main entry, orchestrates setup
 - `scripts/install-claude.sh` - Claude installer with dual auth modes
 - `scripts/install-wireguard.sh` - WireGuard VPN installer
-- `scripts/build-commands.sh` - Builds skill definitions from markdown
-- `commands/*.md` - Skill definitions (filename = skill name)
 
 ## Authentication
 **Manual login** (default): Run `claude` and login interactively (~30 sec per new Codespace)
@@ -17,12 +15,10 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 - `~/.claude.json` - User/org config
 - `~/.claude/.credentials.json` - OAuth tokens (chmod 600)
 - `~/.claude/settings.json` - Settings (plan mode default)
-- `~/.claude/commands/*.md` - Installed skill definitions (copied from `commands/`)
+- `~/.claude/commands/*.md` - Skill definitions (symlinked from echo repo)
 
 ## Custom Skills
-Create skill definition at `commands/name.md` with prompt content. Filename becomes `/name` skill. First line = description, full content = prompt. Auto-installed during setup.
-
-**Current:** `/browser`, `/commit`, `/consult`, `/cyans`, `/doc-style`, `/echo`, `/echo-reflect`, `/email`, `/jira`, `/my-skills`, `/pr-review`, `/save-context`, `/save-plan`, `/secrets`, `/wireguard`
+Skills are defined in the [echo repo](https://github.com/mxstrand/echo) under `commands/`. At install time, `install-claude.sh` clones echo to `~/.echo` and symlinks `~/.echo/commands/*.md` into `~/.claude/commands/`. Dotfiles has no knowledge of individual command names — it symlinks whatever echo provides.
 
 ## External Service Credentials in Skills
 
@@ -84,5 +80,5 @@ Credentials go from env var → file → curl without ever passing through Claud
 - Scripts must work non-interactively
 - Support automated (secrets) and manual (login) flows
 - Update PATH in session and `~/.bashrc`
-- After any change to this repo, review `README.md` for accuracy and update it if needed (file list, skills list, scripts, etc.)
+- After any change to this repo, review `README.md` for accuracy and update it if needed
 - Testing: Run `scripts/test.sh` to validate all scripts
