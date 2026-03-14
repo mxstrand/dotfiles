@@ -248,7 +248,12 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(bash scripts/:*)",
-      "Bash(bash /workspaces/:*)"
+      "Bash(bash /workspaces/:*)",
+      "Read(//home/codespace/.echo/patterns/**)",
+      "Read(//tmp/.echo/**)",
+      "Read(//home/codespace/**)",
+      "Bash(~/.bashrc)",
+      "Bash(printenv:*)"
     ],
     "deny": []
   },
