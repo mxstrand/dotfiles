@@ -380,7 +380,7 @@ if [[ -d "$ECHO_MEMORY" ]] && ls "$ECHO_MEMORY"/*.md >/dev/null 2>&1; then
   find /workspaces -name ".git" -maxdepth 3 -type d 2>/dev/null | while read -r GIT_DIR; do
     PROJECT_ROOT=$(dirname "$GIT_DIR")
     # Claude uses the absolute path with slashes replaced by dashes
-    PROJECT_SLUG=$(echo "$PROJECT_ROOT" | sed 's|^/||; s|/|-|g')
+    PROJECT_SLUG=$(echo "$PROJECT_ROOT" | sed 's|/|-|g')
     MEMORY_DEST="$HOME/.claude/projects/$PROJECT_SLUG/memory"
     mkdir -p "$MEMORY_DEST"
 
