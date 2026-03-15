@@ -153,6 +153,12 @@ if [[ -f "$SCRIPT_DIR/check-permissions.sh" ]]; then
   echo "✅ Installed check-permissions hook"
 fi
 
+if [[ -f "$SCRIPT_DIR/session-start.sh" ]]; then
+  cp "$SCRIPT_DIR/session-start.sh" "$HOOKS_DEST/session-start.sh"
+  chmod +x "$HOOKS_DEST/session-start.sh"
+  echo "✅ Installed session-start hook"
+fi
+
 # Create global settings file — this is the single source of truth for the allow list.
 # settings.local.json in each project is derived from this (see below).
 CLAUDE_SETTINGS_DIR="$HOME/.claude"
@@ -258,6 +264,16 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
     "deny": []
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/scripts/session-start.sh"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
