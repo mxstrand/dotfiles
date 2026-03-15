@@ -18,6 +18,8 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - `scripts/install-claude.sh` - Claude Code installer with verification and authentication
 - `scripts/install-wireguard.sh` - WireGuard VPN installer, loads config from Codespace secret
 - `scripts/check-permissions.sh` - Stop hook: surfaces local allow rules to promote to global
+- `scripts/session-start.sh` - SessionStart hook: prompts Claude to offer `/echo` at session start
+- `scripts/copy-memory.sh` - PostToolUse hook: copies memory files to `.claude-docs/memory/` for visibility
 - `scripts/test.sh` - Test suite for verifying setup
 - `.claude-docs/` - Git-ignored directory for Claude-generated documentation and plans
 
@@ -46,6 +48,14 @@ Custom skills live in the [echo repo](https://github.com/mxstrand/echo) under `c
 **Requires:** `ECHO_REPO` codespace secret set to the echo repo clone URL (e.g., `https://github.com/mxstrand/echo`).
 
 See the echo repo for the full list of available skills.
+
+## Memory Persistence
+
+Claude's memory files are ephemeral — they live in `~/.claude/projects/` and get destroyed with the codespace. To persist memories across codespaces:
+
+1. A **PostToolUse hook** copies memory writes to `.claude-docs/memory/` in the project root for visibility
+2. Review and commit keepers to the echo repo under `memory/`
+3. At install time, dotfiles **restores** `~/.echo/memory/*.md` into each project's Claude memory path and auto-generates the `MEMORY.md` index
 
 ## Testing
 

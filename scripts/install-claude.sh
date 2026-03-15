@@ -159,6 +159,12 @@ if [[ -f "$SCRIPT_DIR/session-start.sh" ]]; then
   echo "✅ Installed session-start hook"
 fi
 
+if [[ -f "$SCRIPT_DIR/copy-memory.sh" ]]; then
+  cp "$SCRIPT_DIR/copy-memory.sh" "$HOOKS_DEST/copy-memory.sh"
+  chmod +x "$HOOKS_DEST/copy-memory.sh"
+  echo "✅ Installed copy-memory hook"
+fi
+
 # Create global settings file — this is the single source of truth for the allow list.
 # settings.local.json in each project is derived from this (see below).
 CLAUDE_SETTINGS_DIR="$HOME/.claude"
@@ -274,6 +280,17 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/scripts/copy-memory.sh"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -354,6 +371,44 @@ if [[ -d "$ECHO_COMMANDS" ]]; then
   echo "🔗 Symlinked $linked command(s) from echo to $CLAUDE_COMMANDS"
 else
   echo "⚠️  No echo commands found at $ECHO_COMMANDS — skipping symlinks"
+fi
+
+# Restore memories from echo into each project's Claude memory directory
+ECHO_MEMORY="$ECHO_DIR/memory"
+
+if [[ -d "$ECHO_MEMORY" ]] && ls "$ECHO_MEMORY"/*.md >/dev/null 2>&1; then
+  find /workspaces -name ".git" -maxdepth 3 -type d 2>/dev/null | while read -r GIT_DIR; do
+    PROJECT_ROOT=$(dirname "$GIT_DIR")
+    # Claude uses the absolute path with slashes replaced by dashes
+    PROJECT_SLUG=$(echo "$PROJECT_ROOT" | sed 's|^/||; s|/|-|g')
+    MEMORY_DEST="$HOME/.claude/projects/$PROJECT_SLUG/memory"
+    mkdir -p "$MEMORY_DEST"
+
+    # Copy memory files (skip MEMORY.md — we'll regenerate it)
+    for md_file in "$ECHO_MEMORY"/*.md; do
+      [[ "$(basename "$md_file")" == "MEMORY.md" ]] && continue
+      cp "$md_file" "$MEMORY_DEST/$(basename "$md_file")"
+    done
+
+    # Auto-generate MEMORY.md index from files present
+    {
+      echo "# Memory Index"
+      echo ""
+      for md_file in "$MEMORY_DEST"/*.md; do
+        [[ "$(basename "$md_file")" == "MEMORY.md" ]] && continue
+        [[ ! -f "$md_file" ]] && continue
+        NAME=$(sed -n 's/^name: *//p' "$md_file" | head -1)
+        DESC=$(sed -n 's/^description: *//p' "$md_file" | head -1)
+        BASENAME=$(basename "$md_file")
+        echo "- [${BASENAME}](${BASENAME}) - ${DESC:-${NAME:-no description}}"
+      done
+    } > "$MEMORY_DEST/MEMORY.md"
+
+    RESTORED=$(ls "$MEMORY_DEST"/*.md 2>/dev/null | grep -cv MEMORY.md || true)
+    echo "🧠 Restored $RESTORED memory file(s) to $MEMORY_DEST"
+  done
+else
+  echo "⚠️  No echo memories found at $ECHO_MEMORY — skipping memory restore"
 fi
 
 echo "🎉 Claude Code setup complete"
