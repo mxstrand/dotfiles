@@ -376,41 +376,48 @@ else
 fi
 
 # Restore memories from echo into each project's Claude memory directory
+# Use existing project slugs from ~/.claude/projects/ rather than deriving
+# from filesystem paths, since the devcontainer workspaceFolder (e.g. /app)
+# may differ from the default codespace path (e.g. /workspaces/nebula).
 ECHO_MEMORY="$ECHO_DIR/memory"
 
 if [[ -d "$ECHO_MEMORY" ]] && ls "$ECHO_MEMORY"/*.md >/dev/null 2>&1; then
-  find /workspaces -name ".git" -maxdepth 3 -type d 2>/dev/null | while read -r GIT_DIR; do
-    PROJECT_ROOT=$(dirname "$GIT_DIR")
-    # Claude uses the absolute path with slashes replaced by dashes
-    PROJECT_SLUG=$(echo "$PROJECT_ROOT" | sed 's|/|-|g')
-    MEMORY_DEST="$HOME/.claude/projects/$PROJECT_SLUG/memory"
-    mkdir -p "$MEMORY_DEST"
+  PROJECTS_DIR="$HOME/.claude/projects"
+  if [[ -d "$PROJECTS_DIR" ]]; then
+    for PROJECT_SLUG_DIR in "$PROJECTS_DIR"/*/; do
+      [[ ! -d "$PROJECT_SLUG_DIR" ]] && continue
+      MEMORY_DEST="${PROJECT_SLUG_DIR}memory"
+      mkdir -p "$MEMORY_DEST"
 
-    # Copy memory files (skip MEMORY.md — we'll regenerate it)
-    for md_file in "$ECHO_MEMORY"/*.md; do
-      [[ "$(basename "$md_file")" == "MEMORY.md" ]] && continue
-      cp "$md_file" "$MEMORY_DEST/$(basename "$md_file")"
-    done
-
-    # Auto-generate MEMORY.md index from files present
-    {
-      echo "# Memory Index"
-      echo ""
-      for md_file in "$MEMORY_DEST"/*.md; do
+      # Copy memory files (skip MEMORY.md -- we'll regenerate it)
+      for md_file in "$ECHO_MEMORY"/*.md; do
         [[ "$(basename "$md_file")" == "MEMORY.md" ]] && continue
-        [[ ! -f "$md_file" ]] && continue
-        NAME=$(sed -n 's/^name: *//p' "$md_file" | head -1)
-        DESC=$(sed -n 's/^description: *//p' "$md_file" | head -1)
-        BASENAME=$(basename "$md_file")
-        echo "- [${BASENAME}](${BASENAME}) - ${DESC:-${NAME:-no description}}"
+        cp "$md_file" "$MEMORY_DEST/$(basename "$md_file")"
       done
-    } > "$MEMORY_DEST/MEMORY.md"
 
-    RESTORED=$(ls "$MEMORY_DEST"/*.md 2>/dev/null | grep -cv MEMORY.md || true)
-    echo "🧠 Restored $RESTORED memory file(s) to $MEMORY_DEST"
-  done
+      # Auto-generate MEMORY.md index from files present
+      {
+        echo "# Memory Index"
+        echo ""
+        for md_file in "$MEMORY_DEST"/*.md; do
+          [[ "$(basename "$md_file")" == "MEMORY.md" ]] && continue
+          [[ ! -f "$md_file" ]] && continue
+          NAME=$(sed -n 's/^name: *//p' "$md_file" | head -1)
+          DESC=$(sed -n 's/^description: *//p' "$md_file" | head -1)
+          BASENAME=$(basename "$md_file")
+          echo "- [${BASENAME}](${BASENAME}) - ${DESC:-${NAME:-no description}}"
+        done
+      } > "$MEMORY_DEST/MEMORY.md"
+
+      RESTORED=$(ls "$MEMORY_DEST"/*.md 2>/dev/null | grep -cv MEMORY.md || true)
+      SLUG_NAME=$(basename "${PROJECT_SLUG_DIR%/}")
+      echo "🧠 Restored $RESTORED memory file(s) to $SLUG_NAME"
+    done
+  else
+    echo "⚠️  No Claude projects directory found -- skipping memory restore"
+  fi
 else
-  echo "⚠️  No echo memories found at $ECHO_MEMORY — skipping memory restore"
+  echo "⚠️  No echo memories found at $ECHO_MEMORY -- skipping memory restore"
 fi
 
 echo "🎉 Claude Code setup complete"
