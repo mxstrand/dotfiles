@@ -18,9 +18,17 @@ if [[ "$FILE_PATH" != */.claude/projects/*/memory/* ]]; then
   exit 0
 fi
 
-# Find the project root by looking for .git
-PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
-if [[ -z "$PROJECT_ROOT" ]]; then
+# Derive project root from the slug in the memory path.
+# Path format: ~/.claude/projects/{slug}/memory/{file}.md
+# The slug is the project root with slashes replaced by dashes (e.g. -app for /app).
+SLUG=$(echo "$FILE_PATH" | sed -n 's|.*/\.claude/projects/\([^/]*\)/memory/.*|\1|p')
+if [[ -z "$SLUG" ]]; then
+  exit 0
+fi
+
+# Convert slug back to path: -app -> /app, -workspaces-nebula -> /workspaces/nebula
+PROJECT_ROOT=$(echo "$SLUG" | sed 's|^-|/|; s|-|/|g')
+if [[ ! -d "$PROJECT_ROOT" ]]; then
   exit 0
 fi
 
