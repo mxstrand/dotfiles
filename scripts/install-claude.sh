@@ -379,7 +379,7 @@ fi
 # Use existing project slugs from ~/.claude/projects/ rather than deriving
 # from filesystem paths, since the devcontainer workspaceFolder (e.g. /app)
 # may differ from the default codespace path (e.g. /workspaces/nebula).
-ECHO_MEMORY="$ECHO_DIR/memory"
+ECHO_MEMORY="$ECHO_DIR/memories"
 
 if [[ -d "$ECHO_MEMORY" ]] && ls "$ECHO_MEMORY"/*.md >/dev/null 2>&1; then
   PROJECTS_DIR="$HOME/.claude/projects"
