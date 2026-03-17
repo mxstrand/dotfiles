@@ -54,8 +54,8 @@ See the echo repo for the full list of available skills.
 Claude's memory files are ephemeral — they live in `~/.claude/projects/` and get destroyed with the codespace. To persist memories across codespaces:
 
 1. A **PostToolUse hook** copies memory writes to `.claude-docs/memory/` in the project root for visibility
-2. Review and commit keepers to the echo repo under `memory/`
-3. At install time, dotfiles **restores** `~/.echo/memory/*.md` into each project's Claude memory path and auto-generates the `MEMORY.md` index
+2. Review and commit keepers to the echo repo under `memories/`
+3. At session start, echo's `/memories` command loads portable memories from `~/.echo/memories/` into the current project's Claude memory path and auto-generates the `MEMORY.md` index
 
 ## Testing
 
