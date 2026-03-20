@@ -113,7 +113,12 @@ if [[ -n "${ECHO_REPO:-}" ]]; then
     echo "🔗 Linked ~/.echo → /workspaces/echo (echo codespace detected)"
   elif [[ ! -d "$ECHO_DIR" ]]; then
     echo "📦 Cloning echo repo..."
-    if GH_TOKEN="${MIKE_CODESPACE_TOKEN:-$GH_TOKEN}" gh repo clone "$ECHO_REPO" "$ECHO_DIR" 2>&1; then
+    if command -v gh >/dev/null 2>&1; then
+      GH_TOKEN="${MIKE_CODESPACE_TOKEN:-$GH_TOKEN}" gh repo clone "$ECHO_REPO" "$ECHO_DIR" 2>&1
+    else
+      git clone "https://${MIKE_CODESPACE_TOKEN}@github.com/${ECHO_REPO}.git" "$ECHO_DIR" 2>&1
+    fi
+    if [[ $? -eq 0 ]]; then
       echo "✅ Echo cloned to $ECHO_DIR"
     else
       echo "❌ Failed to clone echo repo from ECHO_REPO — commands will not be available"
