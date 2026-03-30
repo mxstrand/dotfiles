@@ -272,7 +272,18 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
       "Read(//tmp/.echo/**)",
       "Read(//home/codespace/**)",
       "Bash(~/.bashrc)",
-      "Bash(printenv:*)"
+      "Bash(printenv:*)",
+      "Bash(APP_MODE=* ./bin/console)",
+      "Bash(bin/console cache:*)",
+      "Bash(bin/console app:dev:generate-jwt:*)",
+      "Bash(bin/console debug:router)",
+      "Bash(bin/console doctrine:schema:update --force)",
+      "Bash(../../vendor/bin/phpstan analyse:*)",
+      "Bash(TEST_ENGINE=playwright node tests/sandbox/*)",
+      "Bash(./install-playwright.sh)",
+      "Bash(sudo service:*)",
+      "Bash(sudo apachectl:*)",
+      "Bash(sudo kill:*)"
     ],
     "deny": []
   },
