@@ -28,6 +28,15 @@ else
   echo "⚠️  WireGuard installation script not found (skipping)"
 fi
 
+echo "🔑 Configuring git commit signing..."
+SIGNING_INSTALL="$SCRIPT_DIR/scripts/install-git-signing.sh"
+if [[ -f "$SIGNING_INSTALL" ]]; then
+  chmod +x "$SIGNING_INSTALL"
+  "$SIGNING_INSTALL" 2>&1
+else
+  echo "⚠️  Git signing installation script not found (skipping)"
+fi
+
 # Symlink AGENTS.md to CLAUDE.md (excluding commands directories)
 find /workspaces -name "AGENTS.md" -type f ! -path "*/commands/*" 2>/dev/null | while read -r AGENTS_FILE; do
   AGENTS_DIR=$(dirname "$AGENTS_FILE")
