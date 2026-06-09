@@ -176,12 +176,12 @@ CLAUDE_SETTINGS_DIR="$HOME/.claude"
 CLAUDE_SETTINGS_FILE="$CLAUDE_SETTINGS_DIR/settings.json"
 
 mkdir -p "$CLAUDE_SETTINGS_DIR"
-echo "Configuring Claude settings (plan mode default with pre-approved commands)..."
+echo "Configuring Claude settings (auto mode default with pre-approved commands)..."
 
 cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
 {
   "permissions": {
-    "defaultMode": "plan",
+    "defaultMode": "auto",
     "allow": [
       "Bash(git status:*)",
       "Bash(git log:*)",
@@ -325,7 +325,8 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
     "pr": ""
   },
   "alwaysThinkingEnabled": true,
-  "verbose": true
+  "verbose": true,
+  "skipAutoPermissionPrompt": true
 }
 EOF
 
@@ -357,6 +358,16 @@ echo "✅ Project settings.local.json files configured"
 if [[ -n "${MIKE_CODESPACE_TOKEN:-}" ]] && ! grep -q 'MIKE_CODESPACE_TOKEN' ~/.bashrc 2>/dev/null; then
   echo 'export GH_TOKEN="${MIKE_CODESPACE_TOKEN:-$GH_TOKEN}"' >> ~/.bashrc
   echo "✅ GH_TOKEN configured from MIKE_CODESPACE_TOKEN in .bashrc"
+fi
+
+# Configure git to use gh as its credential helper, so cross-repo `git push` works
+# without embedding the token in the remote URL (setup-git just writes git config; non-interactive).
+if command -v gh >/dev/null 2>&1; then
+  if GH_TOKEN="${MIKE_CODESPACE_TOKEN:-${GH_TOKEN:-}}" gh auth setup-git 2>/dev/null; then
+    echo "✅ git configured to use gh credential helper (cross-repo push)"
+  else
+    echo "⚠️  gh auth setup-git failed — cross-repo git push may still need token-in-URL"
+  fi
 fi
 
 # Fallback to API key method
