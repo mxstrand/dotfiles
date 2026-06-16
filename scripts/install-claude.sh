@@ -354,10 +354,20 @@ done
 
 echo "✅ Project settings.local.json files configured"
 
-# Set GH_TOKEN to personal token if available, so all gh commands work without inline env prefix
-if [[ -n "${MIKE_CODESPACE_TOKEN:-}" ]] && ! grep -q 'MIKE_CODESPACE_TOKEN' ~/.bashrc 2>/dev/null; then
-  echo 'export GH_TOKEN="${MIKE_CODESPACE_TOKEN:-$GH_TOKEN}"' >> ~/.bashrc
-  echo "✅ GH_TOKEN configured from MIKE_CODESPACE_TOKEN in .bashrc"
+# Set GH_TOKEN to personal token if available, so all gh commands work without inline env prefix.
+# IMPORTANT: write to ~/.profile (sourced by login shells, no interactivity guard) as well as
+# ~/.bashrc. ~/.bashrc returns early for non-interactive shells (`case $- in *i*) ;; *) return;;`),
+# so an export appended to it is invisible to non-interactive shells — agent tool shells, CI, and
+# `bash -c`. Those then fall back to the repo-scoped GITHUB_TOKEN and 404 on private cross-org repos.
+# ~/.profile is picked up by the login-shell env probe whose environment every tool shell inherits.
+if [[ -n "${MIKE_CODESPACE_TOKEN:-}" ]]; then
+  for rc in ~/.profile ~/.bashrc; do
+    [[ -e "$rc" ]] || touch "$rc"
+    if ! grep -q 'GH_TOKEN=.*MIKE_CODESPACE_TOKEN' "$rc" 2>/dev/null; then
+      echo 'export GH_TOKEN="${MIKE_CODESPACE_TOKEN:-$GH_TOKEN}"' >> "$rc"
+    fi
+  done
+  echo "✅ GH_TOKEN configured from MIKE_CODESPACE_TOKEN in .profile and .bashrc"
 fi
 
 # Configure git to use gh as its credential helper, so cross-repo `git push` works
