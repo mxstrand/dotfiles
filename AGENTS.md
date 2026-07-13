@@ -20,6 +20,15 @@ Automated Claude Code setup for GitHub Codespaces with manual login or optional 
 ## Custom Skills
 Skills are defined in the [echo repo](https://github.com/mxstrand/echo) under `commands/`. At install time, `install-claude.sh` clones echo to `~/.echo` and symlinks `~/.echo/commands/*.md` into `~/.claude/commands/`. Dotfiles has no knowledge of individual command names — it symlinks whatever echo provides.
 
+## Plugins
+Claude Code plugins are installed non-interactively by `install-claude.sh`. Two pieces:
+- **Enable flag** — `enabledPlugins` in the `settings.json` heredoc turns each plugin on.
+- **Install step** — the `CLAUDE_PLUGINS` associative array (`"plugin@marketplace" => "github-repo"`) drives `claude plugin marketplace add` + `claude plugin install --scope user`. Idempotent; guarded against re-install via `claude plugin list`.
+
+To add a plugin, add an entry to `enabledPlugins` and a matching line in `CLAUDE_PLUGINS`.
+
+**Caveat:** a plugin that bundles an MCP server (e.g. Slack) still needs a one-time interactive OAuth per Codespace. Installing makes the plugin available and enabled; it does not authenticate the MCP connection.
+
 ## External Service Credentials in Skills
 
 Skills that call external APIs receive credentials via environment variables (Codespace secrets). The credential source is defined by each skill — skills document what they expect and how to set it up.

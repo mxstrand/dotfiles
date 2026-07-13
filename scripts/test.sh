@@ -5,79 +5,104 @@ echo "🧪 Testing dotfiles setup..."
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
+CLAUDE_SCRIPT="$SCRIPT_DIR/install-claude.sh"
 
 cd "$REPO_DIR"
 
-# Test 1: Build skills
-echo "1️⃣ Testing skill builder..."
-./scripts/build-commands.sh
-COMMANDS_DIR="$HOME/.claude/commands"
-COPIED=$(ls "$COMMANDS_DIR"/*.md 2>/dev/null | wc -l)
-if [[ "$COPIED" -gt 0 ]]; then
-  echo "   ✅ Skills built successfully ($COPIED .md files)"
-else
-  echo "   ❌ No skill files found in $COMMANDS_DIR"
-  exit 1
-fi
+FAILURES=0
+fail() { echo "   ❌ $1"; FAILURES=$((FAILURES + 1)); }
+pass() { echo "   ✅ $1"; }
 
-# Test 2: Check skill count matches source
-echo "2️⃣ Checking skill count..."
-CMD_COUNT=$(ls commands/*.md | wc -l)
-if [[ "$CMD_COUNT" -eq "$COPIED" ]]; then
-  echo "   ✅ All $CMD_COUNT skills copied"
-else
-  echo "   ❌ Mismatch: $CMD_COUNT source .md files but $COPIED copied"
-  exit 1
-fi
+# Extract the settings.json embedded in the install-claude.sh heredoc so we can
+# validate it without running the installer.
+extract_settings() {
+  sed -n '/^cat > "\$CLAUDE_SETTINGS_FILE" << .EOF.$/,/^EOF$/p' "$CLAUDE_SCRIPT" | sed '1d;$d'
+}
 
-# Test 3: Check each skill has valid frontmatter (two --- fences)
-echo "3️⃣ Validating skill frontmatter..."
-INVALID=0
-for md_file in commands/*.md; do
-  fence_count=$(grep -c '^---$' "$md_file" 2>/dev/null || true)
-  if [[ "$fence_count" -lt 2 ]]; then
-    echo "   ❌ $(basename "$md_file"): missing frontmatter fences (found $fence_count)"
-    INVALID=$((INVALID + 1))
+# Test 1: All shell scripts parse (syntax check)
+echo "1️⃣ Checking shell script syntax..."
+for sh in "$REPO_DIR"/install.sh "$SCRIPT_DIR"/*.sh; do
+  [[ -f "$sh" ]] || continue
+  if bash -n "$sh" 2>/dev/null; then
+    pass "$(basename "$sh") parses"
+  else
+    fail "$(basename "$sh") has a syntax error"
   fi
 done
-if [[ "$INVALID" -eq 0 ]]; then
-  echo "   ✅ All skills have valid frontmatter"
+
+# Test 2: Install script exists
+echo "2️⃣ Checking install-claude.sh path..."
+if [[ -f "$CLAUDE_SCRIPT" ]]; then
+  pass "install-claude.sh found"
 else
-  exit 1
+  fail "install-claude.sh not found"
 fi
 
-# Test 4: Check installation script exists
-echo "4️⃣ Testing installation script paths..."
-if [[ -f "$REPO_DIR/scripts/install-claude.sh" ]]; then
-  echo "   ✅ Installation script found at correct path"
+# Test 3: Embedded settings.json is valid JSON
+echo "3️⃣ Validating embedded settings.json..."
+SETTINGS_JSON="$(extract_settings)"
+if [[ -n "$SETTINGS_JSON" ]] && jq empty <<<"$SETTINGS_JSON" 2>/dev/null; then
+  pass "embedded settings.json is valid JSON"
 else
-  echo "   ❌ Installation script not found"
-  exit 1
+  fail "embedded settings.json is missing or malformed"
+  SETTINGS_JSON=""
 fi
 
-# Test 5: Check build script exists
-if [[ -f "$REPO_DIR/scripts/build-commands.sh" ]]; then
-  echo "   ✅ Build script accessible from install script"
+# Test 4: Hook scripts referenced by settings.json exist in the repo
+echo "4️⃣ Checking hook scripts exist..."
+if [[ -n "$SETTINGS_JSON" ]]; then
+  HOOK_SCRIPTS="$(jq -r '.hooks | to_entries[].value[].hooks[].command' <<<"$SETTINGS_JSON" \
+    | grep -oP '[\w-]+\.sh' | sort -u)"
+  while read -r hook; do
+    [[ -n "$hook" ]] || continue
+    if [[ -f "$SCRIPT_DIR/$hook" ]]; then
+      pass "hook $hook present"
+    else
+      fail "hook $hook referenced by settings.json but missing from scripts/"
+    fi
+  done <<<"$HOOK_SCRIPTS"
 else
-  echo "   ❌ Build script not found"
-  exit 1
+  echo "   ⚠️  Skipped (settings.json unavailable)"
 fi
 
-# Test 6: Validate settings.json is well-formed
-echo "6️⃣ Validating settings.json..."
+# Test 5: enabledPlugins ↔ CLAUDE_PLUGINS are consistent
+echo "5️⃣ Checking plugin config consistency..."
+if [[ -n "$SETTINGS_JSON" ]]; then
+  ENABLED="$(jq -r '.enabledPlugins // {} | keys[]' <<<"$SETTINGS_JSON" | sort)"
+  INSTALLED="$(sed -n '/declare -A CLAUDE_PLUGINS=(/,/^)/p' "$CLAUDE_SCRIPT" \
+    | grep -oP '(?<=\[")[^"]+(?="\])' | sort)"
+  if [[ "$ENABLED" == "$INSTALLED" ]]; then
+    count=$(grep -c . <<<"$ENABLED" || true)
+    pass "enabledPlugins and CLAUDE_PLUGINS agree ($count plugin(s))"
+  else
+    fail "mismatch between enabledPlugins and CLAUDE_PLUGINS:"
+    echo "      enabledPlugins : $(tr '\n' ' ' <<<"$ENABLED")"
+    echo "      CLAUDE_PLUGINS : $(tr '\n' ' ' <<<"$INSTALLED")"
+  fi
+else
+  echo "   ⚠️  Skipped (settings.json unavailable)"
+fi
+
+# Test 6: Installed settings.json (if a real install has run) is valid JSON
+echo "6️⃣ Validating installed settings.json (if present)..."
 SETTINGS="$HOME/.claude/settings.json"
 if [[ -f "$SETTINGS" ]]; then
   if jq empty "$SETTINGS" 2>/dev/null; then
-    echo "   ✅ settings.json is valid JSON"
+    pass "$SETTINGS is valid JSON"
   else
-    echo "   ❌ settings.json is malformed"
-    exit 1
+    fail "$SETTINGS is malformed"
   fi
 else
-  echo "   ⚠️  settings.json not found (run install first)"
+  echo "   ⚠️  Skipped (not installed yet — run ./install.sh)"
 fi
 
 echo ""
-echo "✅ All tests passed!"
+if [[ "$FAILURES" -eq 0 ]]; then
+  echo "✅ All tests passed!"
+else
+  echo "❌ $FAILURES test(s) failed."
+  exit 1
+fi
+
 echo ""
 echo "To fully test installation, run: ./install.sh"

@@ -287,6 +287,9 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
     ],
     "deny": []
   },
+  "enabledPlugins": {
+    "slack@claude-plugins-official": true
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -410,6 +413,43 @@ if [[ -d "$ECHO_COMMANDS" ]]; then
   echo "🔗 Symlinked $linked command(s) from echo to $CLAUDE_COMMANDS"
 else
   echo "⚠️  No echo commands found at $ECHO_COMMANDS — skipping symlinks"
+fi
+
+# ── Install Claude Code plugins ─────────────────────────────────────
+# Adds each marketplace and installs each plugin non-interactively.
+# The enable flag lives in settings.json (enabledPlugins) above; this block
+# ensures the plugin code is actually downloaded/cached so it can load.
+# To add a plugin: add a "plugin@marketplace" => "github-repo" entry below.
+# NOTE: plugins bundling an MCP server (e.g. Slack) still require a one-time
+# interactive OAuth per Codespace — installing ≠ authenticating.
+declare -A CLAUDE_PLUGINS=(
+  ["slack@claude-plugins-official"]="anthropics/claude-plugins-official"
+)
+
+if command -v claude >/dev/null 2>&1; then
+  echo "🔌 Installing Claude Code plugins..."
+  INSTALLED_PLUGINS="$(claude plugin list 2>/dev/null || true)"
+  declare -A ADDED_MARKETS=()
+  for plugin in "${!CLAUDE_PLUGINS[@]}"; do
+    repo="${CLAUDE_PLUGINS[$plugin]}"
+    market="${plugin##*@}"
+
+    # Register the marketplace once (idempotent; safe to re-run).
+    if [[ -z "${ADDED_MARKETS[$market]:-}" ]]; then
+      claude plugin marketplace add "$repo" 2>&1 || echo "⚠️  marketplace add $repo failed"
+      ADDED_MARKETS[$market]=1
+    fi
+
+    if grep -q "$plugin" <<<"$INSTALLED_PLUGINS"; then
+      echo "   Plugin $plugin already installed — skipping"
+    elif claude plugin install "$plugin" --scope user 2>&1; then
+      echo "✅ Installed plugin $plugin"
+    else
+      echo "⚠️  Failed to install plugin $plugin"
+    fi
+  done
+else
+  echo "⚠️  claude not on PATH — skipping plugin installation"
 fi
 
 echo "🎉 Claude Code setup complete"

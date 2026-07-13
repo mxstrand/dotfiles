@@ -9,6 +9,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - **WireGuard VPN** - On-demand VPN access from Codespaces (requires `WIREGUARD_CONFIG` secret)
 - Automated installation and optional authentication scripts with error handling
 - Custom skills symlinked from [echo](https://github.com/mxstrand/echo) repo
+- **Claude Code plugins** - installed and enabled automatically (e.g. Slack); MCP-backed plugins still need a one-time OAuth per Codespace
 - Plan mode enabled by default
 - `.claude-docs/` directory for Claude-accessible scripts and documentation
 
@@ -48,6 +49,17 @@ Custom skills live in the [echo repo](https://github.com/mxstrand/echo) under `c
 **Requires:** `ECHO_REPO` codespace secret set to the echo repo clone URL (e.g., `https://github.com/mxstrand/echo`).
 
 See the echo repo for the full list of available skills.
+
+## Plugins
+
+Claude Code plugins are installed non-interactively during setup by `install-claude.sh`:
+
+- `enabledPlugins` in `~/.claude/settings.json` turns each plugin on.
+- A `CLAUDE_PLUGINS` map (`"plugin@marketplace" => "github-repo"`) drives `claude plugin marketplace add` + `claude plugin install`. It's idempotent and skips already-installed plugins.
+
+To add a plugin, add an entry to both places in `scripts/install-claude.sh`.
+
+**Note:** plugins that bundle an MCP server (e.g. Slack) still require a one-time interactive OAuth in each new Codespace — installation makes the plugin available and enabled, but does not authenticate the connection.
 
 ## Memory Persistence
 
