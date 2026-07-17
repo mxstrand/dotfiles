@@ -9,7 +9,7 @@ Personal dotfiles for automated development environment setup in GitHub Codespac
 - **WireGuard VPN** - On-demand VPN access from Codespaces (requires `WIREGUARD_CONFIG` secret)
 - Automated installation and optional authentication scripts with error handling
 - Custom skills symlinked from [echo](https://github.com/mxstrand/echo) repo
-- **Claude Code plugins** - installed and enabled automatically (e.g. Slack); MCP-backed plugins still need a one-time OAuth per Codespace
+- **Claude Code plugins** - installed and enabled automatically (e.g. Slack, frontend-design); MCP-backed plugins still need a one-time OAuth per Codespace
 - Plan mode enabled by default
 - `.claude-docs/` directory for Claude-accessible scripts and documentation
 

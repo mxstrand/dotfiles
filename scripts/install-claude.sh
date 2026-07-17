@@ -288,7 +288,8 @@ cat > "$CLAUDE_SETTINGS_FILE" << 'EOF'
     "deny": []
   },
   "enabledPlugins": {
-    "slack@claude-plugins-official": true
+    "slack@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true
   },
   "hooks": {
     "SessionStart": [
@@ -424,6 +425,7 @@ fi
 # interactive OAuth per Codespace — installing ≠ authenticating.
 declare -A CLAUDE_PLUGINS=(
   ["slack@claude-plugins-official"]="anthropics/claude-plugins-official"
+  ["frontend-design@claude-plugins-official"]="anthropics/claude-plugins-official"
 )
 
 if command -v claude >/dev/null 2>&1; then
