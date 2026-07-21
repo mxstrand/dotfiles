@@ -56,13 +56,17 @@ find /workspaces -name "AGENTS.md" -type f ! -path "*/commands/*" 2>/dev/null | 
   fi
 done
 
-# Keep the generated CLAUDE.md symlinks out of git status in every repo —
-# they are machine-local, never committed (see AGENTS.md convention)
+# Keep dotfiles-generated files out of git status in every repo — the
+# CLAUDE.md symlinks and .claude-docs/ dirs are machine-local, never
+# committed. Global excludesFile (not per-repo .git/info/exclude) so repos
+# cloned after provisioning are covered too.
 GLOBAL_GITIGNORE="$HOME/.config/git/ignore"
 mkdir -p "$(dirname "$GLOBAL_GITIGNORE")"
-grep -qxF "CLAUDE.md" "$GLOBAL_GITIGNORE" 2>/dev/null || echo "CLAUDE.md" >> "$GLOBAL_GITIGNORE"
+for pattern in "CLAUDE.md" ".claude-docs/"; do
+  grep -qxF "$pattern" "$GLOBAL_GITIGNORE" 2>/dev/null || echo "$pattern" >> "$GLOBAL_GITIGNORE"
+done
 git config --global core.excludesFile "$GLOBAL_GITIGNORE"
-echo "🙈 Global gitignore excludes CLAUDE.md ($GLOBAL_GITIGNORE)"
+echo "🙈 Global gitignore excludes CLAUDE.md + .claude-docs/ ($GLOBAL_GITIGNORE)"
 
 # Create .claude-docs directory in all git repositories
 find /workspaces -name ".git" -type d 2>/dev/null | while read -r GIT_DIR; do
@@ -73,13 +77,6 @@ find /workspaces -name ".git" -type d 2>/dev/null | while read -r GIT_DIR; do
   if [[ ! -d "$CLAUDE_DOCS_DIR" ]]; then
     mkdir -p "$CLAUDE_DOCS_DIR"
     echo "📁 Created .claude-docs at $CLAUDE_DOCS_DIR"
-  fi
-
-  # Add to git exclude if not already present
-  GIT_EXCLUDE="$GIT_DIR/info/exclude"
-  if ! grep -q "^\.claude-docs/$" "$GIT_EXCLUDE" 2>/dev/null; then
-    echo ".claude-docs/" >> "$GIT_EXCLUDE"
-    echo "   Added .claude-docs/ to git exclude"
   fi
 done
 
