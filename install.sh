@@ -56,6 +56,14 @@ find /workspaces -name "AGENTS.md" -type f ! -path "*/commands/*" 2>/dev/null | 
   fi
 done
 
+# Keep the generated CLAUDE.md symlinks out of git status in every repo —
+# they are machine-local, never committed (see AGENTS.md convention)
+GLOBAL_GITIGNORE="$HOME/.config/git/ignore"
+mkdir -p "$(dirname "$GLOBAL_GITIGNORE")"
+grep -qxF "CLAUDE.md" "$GLOBAL_GITIGNORE" 2>/dev/null || echo "CLAUDE.md" >> "$GLOBAL_GITIGNORE"
+git config --global core.excludesFile "$GLOBAL_GITIGNORE"
+echo "🙈 Global gitignore excludes CLAUDE.md ($GLOBAL_GITIGNORE)"
+
 # Create .claude-docs directory in all git repositories
 find /workspaces -name ".git" -type d 2>/dev/null | while read -r GIT_DIR; do
   PROJECT_ROOT=$(dirname "$GIT_DIR")
